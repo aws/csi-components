@@ -1,0 +1,10 @@
+# MacOS system files
+*.DS_Store
+
+# vim
+*.swp
+
+# Build artifacts
+bin
+build
+Dockerfile.*

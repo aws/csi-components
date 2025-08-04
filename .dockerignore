@@ -1,0 +1,3 @@
+# Always build binary from scratch in docker
+bin
+build

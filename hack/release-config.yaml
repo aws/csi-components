@@ -1,0 +1,26 @@
+# This file holds config that changes for each performed release
+# eksbuild can be used to perform an arbitrary version bump when
+# the build process or patches change but the underlying version
+# does not change (e.g. to patch a CVE early before upstream)
+
+csi-attacher:
+  tag: 'v4.9.0'
+  eksbuild: '3'
+csi-node-driver-registrar:
+  tag: 'v2.14.0'
+  eksbuild: '4'
+csi-provisioner:
+  tag: 'v5.3.0'
+  eksbuild: '3'
+csi-resizer:
+  tag: 'v1.14.0'
+  eksbuild: '3'
+csi-snapshotter:
+  tag: 'v8.3.0'
+  eksbuild: '1'
+livenessprobe:
+  tag: 'v2.16.0'
+  eksbuild: '4'
+snapshot-controller:
+  tag: 'v8.3.0'
+  eksbuild: '1'

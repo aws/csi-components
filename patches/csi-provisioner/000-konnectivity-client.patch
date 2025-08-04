@@ -1,0 +1,41 @@
+diff --git a/go.mod b/go.mod
+index 904d00be1..cbb7bfe86 100644
+--- a/go.mod
++++ b/go.mod
+@@ -148,7 +148,7 @@ require (
+ 	k8s.io/mount-utils v0.33.0 // indirect
+ 	k8s.io/pod-security-admission v0.33.0 // indirect
+ 	k8s.io/utils v0.0.0-20241210054802-24370beab758 // indirect
+-	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.32.1 // indirect
++	sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.33.0 // indirect
+ 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
+ 	sigs.k8s.io/randfill v1.0.0 // indirect
+ 	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
+diff --git a/go.sum b/go.sum
+index 0c106a4ac..e514ea970 100644
+--- a/go.sum
++++ b/go.sum
+@@ -353,8 +353,8 @@ k8s.io/pod-security-admission v0.33.0 h1:di/iicB5plCq+iQeqgf2s1N5DOSzTDiOOv5OiAb
+ k8s.io/pod-security-admission v0.33.0/go.mod h1:McuUMtSclLNxQdCkDTTWqKR79jnpHT/022GuanVU/Wg=
+ k8s.io/utils v0.0.0-20241210054802-24370beab758 h1:sdbE21q2nlQtFh65saZY+rRM6x6aJJI8IUa1AmH/qa0=
+ k8s.io/utils v0.0.0-20241210054802-24370beab758/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
+-sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.32.1 h1:Cf+ed5N8038zbsaXFO7mKQDi/+VcSRafb0jM84KX5so=
+-sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.32.1/go.mod h1:Ve9uj1L+deCXFrPOk1LpFXqTg7LCFzFso6PA48q/XZw=
++sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.33.0 h1:qPrZsv1cwQiFeieFlRqT627fVZ+tyfou/+S5S0H5ua0=
++sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.33.0/go.mod h1:Ve9uj1L+deCXFrPOk1LpFXqTg7LCFzFso6PA48q/XZw=
+ sigs.k8s.io/controller-runtime v0.21.0 h1:CYfjpEuicjUecRk+KAeyYh+ouUBn4llGyDYytIGcJS8=
+ sigs.k8s.io/controller-runtime v0.21.0/go.mod h1:OSg14+F65eWqIu4DceX7k/+QRAbTTvxeQSNSOQpukWM=
+ sigs.k8s.io/gateway-api v1.3.0 h1:q6okN+/UKDATola4JY7zXzx40WO4VISk7i9DIfOvr9M=
+diff --git a/vendor/modules.txt b/vendor/modules.txt
+index de6ebc909..5478d1e9d 100644
+--- a/vendor/modules.txt
++++ b/vendor/modules.txt
+@@ -1572,7 +1572,7 @@ k8s.io/utils/pointer
+ k8s.io/utils/ptr
+ k8s.io/utils/strings
+ k8s.io/utils/trace
+-# sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.32.1
++# sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.33.0
+ ## explicit; go 1.21
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/client
+ sigs.k8s.io/apiserver-network-proxy/konnectivity-client/pkg/client/metrics

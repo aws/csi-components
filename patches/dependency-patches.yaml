@@ -1,0 +1,17 @@
+# Quick patching for dependency-only changes
+# Versions in this file will be automatically applied followed
+# by `go mod tidy` and `go mod vendor` during builds
+#
+# If changes beyond upgrading the version are required, such
+# as adjusting function calls, use a full patch file
+#
+# These changes are applied AFTER the relevant patch folder
+# and thus must compose on top of them
+
+csi-attacher: {}
+csi-node-driver-registrar: {}
+csi-provisioner: {}
+csi-resizer: {}
+csi-snapshotter: {}
+livenessprobe: {}
+snapshot-controller: {}

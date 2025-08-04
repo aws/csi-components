@@ -1,0 +1,31 @@
+# This file holds static config for each container that is unlikely to change per-release
+# Targets are in the form ARCH-OS-OSVERSION, where the container will be built with the
+# target OS-OSVERSION (e.g. amd64-linux-al2023 will build the Docker target linux-al2023)
+
+csi-attacher:
+  repo: https://github.com/kubernetes-csi/external-attacher
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
+  e2e-parameter: sidecars.attacher.image
+csi-node-driver-registrar:
+  repo: https://github.com/kubernetes-csi/node-driver-registrar
+  targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022]
+  e2e-parameter: sidecars.nodeDriverRegistrar.image
+csi-provisioner:
+  repo: https://github.com/kubernetes-csi/external-provisioner
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
+  e2e-parameter: sidecars.provisioner.image
+csi-resizer:
+  repo: https://github.com/kubernetes-csi/external-resizer
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
+  e2e-parameter: sidecars.resizer.image
+csi-snapshotter:
+  repo: https://github.com/kubernetes-csi/external-snapshotter
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
+  e2e-parameter: sidecars.snapshotter.image
+livenessprobe:
+  repo: https://github.com/kubernetes-csi/livenessprobe
+  targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022]
+  e2e-parameter: sidecars.livenessProbe.image
+snapshot-controller:
+  repo: https://github.com/kubernetes-csi/external-snapshotter
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
