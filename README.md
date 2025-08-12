@@ -1,5 +1,9 @@
 # Components for CSI
 
+[![E2E Tests](https://github.com/aws/csi-components/actions/workflows/e2e.yaml/badge.svg?event=push)](https://github.com/aws/csi-components/actions/workflows/e2e.yaml)
+[![Push Staging Images](https://github.com/aws/csi-components/actions/workflows/release.yaml/badge.svg?event=push)](https://github.com/aws/csi-components/actions/workflows/release.yaml)
+[![AWS Janitor](https://github.com/aws/csi-components/actions/workflows/janitor.yaml/badge.svg)](https://github.com/aws/csi-components/actions/workflows/janitor.yaml)
+
 ## Overview
 
 This repository contains the tooling used to build minimal Amazon Linux based versions of the [Kubernetes CSI Sidecars](https://kubernetes-csi.github.io/docs/sidecar-containers.html) (and other related components such as the Kubernetes CSI `snapshot-controller` image).
@@ -7,6 +11,8 @@ This repository contains the tooling used to build minimal Amazon Linux based ve
 These images are used in the official releases of the [EBS CSI Driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/) versions `v1.45.0` and later.
 
 ## Images
+
+The released images are hosted on the [`csi-components` ECR Public Registry](https://gallery.ecr.aws/csi-components).
 
 | Project | Latest Released Version | Image Pull URI |
 | ------------- | ------------- | ------------- |

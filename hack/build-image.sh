@@ -22,7 +22,7 @@ IMAGE="${1}"
 cd "${BASE_DIR}/.."
 
 TARGETS=$(yq ".${IMAGE}.targets | join(\" \")" "${BASE_DIR}/static-config.yaml")
-TAG=$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
+TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
 EKSBUILD="$(yq ".${IMAGE}.eksbuild" "${BASE_DIR}/release-config.yaml")"
 
 # Check if image already exists and skip the build if so
