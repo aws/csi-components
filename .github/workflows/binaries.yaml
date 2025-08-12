@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,11 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euo pipefail
-BASE_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
-IMAGE="${1}"
-TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
-EKSBUILD="$(yq ".${IMAGE}.eksbuild" "${BASE_DIR}/release-config.yaml")"
+name: Build Binaries
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
-docker pull -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:latest image -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+permissions:
+  contents: read
+
+# Cancel in-flight jobs when a new push happens
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Test Build Binaries
+        run: make all

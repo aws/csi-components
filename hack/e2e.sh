@@ -34,7 +34,7 @@ for IMAGE in $IMAGES; do
     # Skip images with no e2e-parameter such as snapshot-controller
     continue
   fi
-  TAG=$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
+  TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
 
   # TODO: Consider updating the aws-ebs-csi-driver repo to make this easier
   yq -i ".${PARAM}.repository=\"${REGISTRY}/${IMAGE}\"" "${BASE_DIR}/../build/aws-ebs-csi-driver/charts/aws-ebs-csi-driver/values.yaml"
@@ -45,7 +45,7 @@ done
 # Special case: snapshot-controller is not a sidecar, and is passed to the EBS CSI
 # E2E tests through the environment variable EBS_INSTALL_SNAPSHOT_CUSTOM_IMAGE
 SC_EKSBUILD="$(yq ".snapshot-controller.eksbuild" "${BASE_DIR}/release-config.yaml")"
-export EBS_INSTALL_SNAPSHOT_CUSTOM_IMAGE="${REGISTRY}/${IMAGE}:$(yq ".snapshot-controller.tag" "${BASE_DIR}/release-config.yaml")-eksbuild.${SC_EKSBUILD}"
+export EBS_INSTALL_SNAPSHOT_CUSTOM_IMAGE="${REGISTRY}/${IMAGE}:${TAG_PREFIX}$(yq ".snapshot-controller.tag" "${BASE_DIR}/release-config.yaml")-eksbuild.${SC_EKSBUILD}"
 # Use a KOPS bucket specifically for the CSI components, as to not conflict
 # with any other clusters or E2E tests
 export KOPS_BUCKET="$(aws sts get-caller-identity --query Account --output text)-csi-components-e2e"
