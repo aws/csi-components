@@ -18,6 +18,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -33,6 +35,8 @@ concurrency:
   
 jobs:
   build-images:
+    # Only local PRs have access to the secret to run E2E tests, skip otherwise
+    if: ${{ github.event.pull_request.head.repo.full_name == 'aws/csi-components' }}
     runs-on:
       - codebuild-csi-components-e2e-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
