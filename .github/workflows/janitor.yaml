@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
         with:
           go-version: '1.24'
       
@@ -33,7 +33,7 @@ jobs:
         run: go install sigs.k8s.io/boskos/cmd/aws-janitor@latest
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4.3.1
+        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::702945799511:role/github-actions-csi-components
