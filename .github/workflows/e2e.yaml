@@ -51,7 +51,7 @@ jobs:
           role-session-name: GithubActionsSetup
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@4625ce35226a7557230889aae2f52eb50ec3dcda
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
@@ -88,7 +88,7 @@ jobs:
           role-session-name: GithubActionsTrivy
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@4625ce35226a7557230889aae2f52eb50ec3dcda
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
       - name: Scan Images
         run: make all-trivy
