@@ -3,11 +3,13 @@ updates:
   # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
+    patterns: ["*"]
     multi-ecosystem-group: "all-dependencies"
 
   # Docker dependencies
   - package-ecosystem: "docker"
     directory: "/"
+    patterns: ["*"]
     multi-ecosystem-group: "all-dependencies"
 
 multi-ecosystem-groups:
