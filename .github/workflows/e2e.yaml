@@ -57,7 +57,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       # Use EKS-D mirror of image to avoid Docker Hub rate limits
       - name: Set up QEMU
@@ -143,7 +143,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       # TODO: This and the buildx step are only necessary until running
       # the EBS CSI E2E tests with the released image is possible
