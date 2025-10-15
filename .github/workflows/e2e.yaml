@@ -92,7 +92,30 @@ jobs:
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
       - name: Scan Images
-        run: make all-trivy
+        id: scan-images
+        # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
+        run: |
+          {
+            echo 'TRIVY_OUTPUT<<EOF'
+            make all-trivy
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = `## Trivy Output
+            \`\`\`
+            ${{ steps.scan-images.outputs.TRIVY_OUTPUT }}
+            \`\`\``;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
   ebs-csi-e2e:
     needs: build-images
     strategy:
