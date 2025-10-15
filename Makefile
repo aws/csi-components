@@ -25,6 +25,8 @@ E2E_EBS_CSI_VERSION?=release-1.47
 TAG_PREFIX?=
 # Files to rebuild when changed
 BUILD_SOURCES=$(shell find hack/ patches/ -type f \( -iname "*.sh" -o -iname "*.yaml" \))
+# Output Trivy in SARIF format (e.g. for GitHub upload)
+OUTPUT_SARIF?=
 
 ## Default target
 # When no target is supplied, make runs the first target that does not begin with a .
@@ -36,7 +38,7 @@ default: all-image
 
 .PHONY: clean
 clean:
-	rm -rf bin/ build/ Dockerfile.*
+	rm -rf bin/ build/ output/ Dockerfile.*
 
 # Helper target to quickly create ECR repos
 .PHONY: setup-ecr
@@ -66,7 +68,7 @@ licenses/%: bin/%
 
 ## Binary build targets
 
-bin build:
+bin build output:
 	@mkdir -p $@
 
 bin/%: $(BUILD_SOURCES) | bin build
@@ -85,8 +87,8 @@ all-image: image/csi-snapshotter image/csi-attacher image/csi-provisioner image/
 
 ## Trivy (image scanner) targets
 
-trivy/%:
-	@TAG_PREFIX="$(TAG_PREFIX)" REGISTRY="$(REGISTRY)" hack/trivy.sh $*
+trivy/%: output
+	@TAG_PREFIX="$(TAG_PREFIX)" REGISTRY="$(REGISTRY)" OUTPUT_SARIF="$(OUTPUT_SARIF)" hack/trivy.sh $*
 
 .PHONY: all-trivy
 all-trivy: trivy/csi-snapshotter trivy/csi-attacher trivy/csi-provisioner trivy/csi-resizer trivy/csi-node-driver-registrar trivy/livenessprobe trivy/snapshot-controller
