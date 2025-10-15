@@ -16,7 +16,7 @@ name: External PR Check
 on:
   pull_request_target:
     branches:
-      - fix-external-prs
+      - main
 
 permissions:
   contents: read
