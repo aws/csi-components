@@ -7,4 +7,5 @@
 # Build artifacts
 bin
 build
+output
 Dockerfile.*

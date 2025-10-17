@@ -20,5 +20,10 @@ IMAGE="${1}"
 TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
 EKSBUILD="$(yq ".${IMAGE}.eksbuild" "${BASE_DIR}/release-config.yaml")"
 
+# Pulling ensures we always have the latest image (Trivy will skip pull sometimes)
 docker pull -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:latest image -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+if [ -n "${OUTPUT_SARIF:+x}" ]; then
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:latest image -f sarif "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
+else
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:latest image -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+fi

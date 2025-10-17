@@ -12,11 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build Binaries
+name: Tests
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -39,7 +36,27 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Test Build Binaries
         run: make all
+  test-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Set up Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
+        with:
+          go-version: '1.25'
+
+      - name: Run make update-readme
+        run: make update-readme
+
+      - name: Check for changes
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "Changes detected! Please resubmit PR after running make update-readme"
+            exit 1
+          fi

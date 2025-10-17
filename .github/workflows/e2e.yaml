@@ -24,6 +24,7 @@ on:
 permissions:
   contents: read
   id-token: write
+  pull-requests: write
 
 env:
   TAG_PREFIX: ${{ github.sha }}-
@@ -56,7 +57,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       # Use EKS-D mirror of image to avoid Docker Hub rate limits
       - name: Set up QEMU
@@ -91,7 +92,30 @@ jobs:
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
       - name: Scan Images
-        run: make all-trivy
+        id: scan-images
+        # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
+        run: |
+          {
+            echo 'TRIVY_OUTPUT<<EOF'
+            make all-trivy
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = `## Trivy Output
+            \`\`\`
+            ${{ steps.scan-images.outputs.TRIVY_OUTPUT }}
+            \`\`\``;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
   ebs-csi-e2e:
     needs: build-images
     strategy:
@@ -119,7 +143,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       # TODO: This and the buildx step are only necessary until running
       # the EBS CSI E2E tests with the released image is possible
@@ -137,3 +161,15 @@ jobs:
           wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           make e2e/${{ matrix.test }}
+  dependabot:
+    needs: ebs-csi-e2e
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Approve and enable auto-merge for Dependabot PRs
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --merge "$PR_URL"
