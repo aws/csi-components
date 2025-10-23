@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
   security-events: write
+  id-token: write
   
 jobs:
   trivy-published:
@@ -28,12 +29,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838
+        with:
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::797935246662:role/github-actions-csi-components
+          role-session-name: GithubActionsTrivy
+
+      # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
+      # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
+      - name: Login to Amazon ECR Public
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        with:
+          registry-type: public
+
       - name: Run Trivy (SARIF Output)
         env:
           REGISTRY: public.ecr.aws/csi-components
           OUTPUT_SARIF: 'true'
-
         run: make all-trivy
+
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@f443b600d91635bebf5b0d9ebc620189c0d6fba5
         with:
