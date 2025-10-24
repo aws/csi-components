@@ -33,7 +33,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@a03048d87541d1d9fcf2ecf528a4a65ba9bd7838
         with:
           aws-region: us-west-2
-          role-to-assume: arn:aws:iam::797935246662:role/github-actions-csi-components
+          role-to-assume: arn:aws:iam::702945799511:role/github-actions-csi-components
           role-session-name: GithubActionsTrivy
 
       # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
