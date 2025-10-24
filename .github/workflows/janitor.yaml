@@ -23,7 +23,7 @@ permissions:
 jobs:
   janitor:
     # Don't run on forked repos
-    if: ${{ github.repository == 'aws/csi-components-test' }}
+    if: ${{ github.repository == 'aws/csi-components' }}
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go
