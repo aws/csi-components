@@ -91,6 +91,15 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
 
+      # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
+      # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
+      - name: Login to Amazon ECR Public
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        env:
+          AWS_REGION: us-east-1
+        with:
+          registry-type: public
+
       - name: Scan Images
         id: scan-images
         # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#example-of-a-multiline-string
