@@ -4,11 +4,11 @@
 # does not change (e.g. to patch a CVE early before upstream)
 
 csi-attacher:
-  tag: 'v4.9.0'
-  eksbuild: '4'
+  tag: 'v4.10.0'
+  eksbuild: '1'
 csi-node-driver-registrar:
-  tag: 'v2.14.0'
-  eksbuild: '5'
+  tag: 'v2.15.0'
+  eksbuild: '1'
 csi-provisioner:
   tag: 'v5.3.0'
   eksbuild: '4'
@@ -16,11 +16,11 @@ csi-resizer:
   tag: 'v1.14.0'
   eksbuild: '4'
 csi-snapshotter:
-  tag: 'v8.3.0'
-  eksbuild: '2'
+  tag: 'v8.4.0'
+  eksbuild: '1'
 livenessprobe:
-  tag: 'v2.16.0'
-  eksbuild: '5'
+  tag: 'v2.17.0'
+  eksbuild: '1'
 snapshot-controller:
-  tag: 'v8.3.0'
-  eksbuild: '2'
+  tag: 'v8.4.0'
+  eksbuild: '1'
