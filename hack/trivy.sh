@@ -25,7 +25,7 @@ docker pull -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
 if [ -n "${OUTPUT_SARIF:+x}" ]; then
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:latest image -f sarif "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
   # Required by GitHub to upload multiple SARIF files: https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning#uploading-more-than-one-sarif-file-for-a-commit
-  yq -i ".runs[].automationDetails.id = \"trivy/${IMAGE}/$(date +%s)\"" "${BASE_DIR}/../output/${IMAGE}.sarif"
+  yq -o json -i ".runs[].automationDetails.id = \"trivy/${IMAGE}/$(date +%s)\"" "${BASE_DIR}/../output/${IMAGE}.sarif"
 else
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:latest image -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
 fi
