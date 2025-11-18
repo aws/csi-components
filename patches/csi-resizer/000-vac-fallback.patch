@@ -1,0 +1,85 @@
+From 417eaf5ec2b3f17fc660b97a71c9f5856c568351 Mon Sep 17 00:00:00 2001
+From: Eddie Torres <torredil@amazon.com>
+Date: Tue, 18 Nov 2025 17:19:22 +0000
+Subject: [PATCH] Enable use of v1beta1 for VolumeAttributesClass API
+
+Signed-off-by: Eddie Torres <torredil@amazon.com>
+---
+ cmd/csi-resizer/main.go               | 10 ++++++---
+ pkg/modifycontroller/modify_volume.go |  2 +-
+ pkg/modifycontroller/vac_compat.go    | 29 +++++++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 4 deletions(-)
+ create mode 100644 pkg/modifycontroller/vac_compat.go
+
+diff --git a/cmd/csi-resizer/main.go b/cmd/csi-resizer/main.go
+index 79fa1471..a7ed84eb 100644
+--- a/cmd/csi-resizer/main.go
++++ b/cmd/csi-resizer/main.go
+@@ -160,9 +160,13 @@ func main() {
+ 		case enabled:
+ 			klog.InfoS("VolumeAttributesClass v1 API is available")
+ 		default:
+-			klog.InfoS("Disabling VolumeAttributesClass feature gate because the VolumeAttributesClass v1 API is not available")
+-			if err := utilfeature.DefaultMutableFeatureGate.OverrideDefault(features.VolumeAttributesClass, false); err != nil {
+-				klog.Fatalf("Failed to disable VolumeAttributesClass feature gate: %v", err)
++			if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++				klog.InfoS("VolumeAttributesClass v1 API not available, will use v1beta1 fallback")
++			} else {
++				klog.InfoS("Disabling VolumeAttributesClass feature gate because the VolumeAttributesClass v1 API is not available")
++				if err := utilfeature.DefaultMutableFeatureGate.OverrideDefault(features.VolumeAttributesClass, false); err != nil {
++					klog.Fatalf("Failed to disable VolumeAttributesClass feature gate: %v", err)
++				}
+ 			}
+ 		}
+ 	}
+diff --git a/pkg/modifycontroller/modify_volume.go b/pkg/modifycontroller/modify_volume.go
+index df05ec59..7dc04a19 100644
+--- a/pkg/modifycontroller/modify_volume.go
++++ b/pkg/modifycontroller/modify_volume.go
+@@ -109,7 +109,7 @@ func (ctrl *modifyController) rolledBack(pvc *v1.PersistentVolumeClaim) (*v1.Per
+ }
+ 
+ func (ctrl *modifyController) getTargetVAC(pvc *v1.PersistentVolumeClaim, vacName string) (*storagev1.VolumeAttributesClass, error) {
+-	vac, err := ctrl.vacLister.Get(vacName)
++	vac, err := getVolumeAttributesClass(ctrl.vacLister, ctrl.kubeClient, vacName)
+ 	// Check if pvcSpecVac is valid and exist
+ 	if err != nil {
+ 		if apierrors.IsNotFound(err) {
+diff --git a/pkg/modifycontroller/vac_compat.go b/pkg/modifycontroller/vac_compat.go
+new file mode 100644
+index 00000000..5d52a58d
+--- /dev/null
++++ b/pkg/modifycontroller/vac_compat.go
+@@ -0,0 +1,29 @@
++package modifycontroller
++
++import (
++	"context"
++	"os"
++
++	storagev1 "k8s.io/api/storage/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes"
++	storagev1listers "k8s.io/client-go/listers/storage/v1"
++)
++
++// getVolumeAttributesClass retrieves a VolumeAttributesClass.
++// If ENABLE_VAC_FALLBACK is set, v1beta1 API is used.
++func getVolumeAttributesClass(lister storagev1listers.VolumeAttributesClassLister, client kubernetes.Interface, name string) (*storagev1.VolumeAttributesClass, error) {
++	if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++		vacBeta, err := client.StorageV1beta1().VolumeAttributesClasses().Get(context.TODO(), name, metav1.GetOptions{})
++		if err != nil {
++			return nil, err
++		}
++		return &storagev1.VolumeAttributesClass{
++			ObjectMeta: vacBeta.ObjectMeta,
++			DriverName: vacBeta.DriverName,
++			Parameters: vacBeta.Parameters,
++		}, nil
++	}
++
++	return lister.Get(name)
++}
+-- 
+2.47.3
+

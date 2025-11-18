@@ -20,7 +20,7 @@ REGISTRY?=$(shell aws sts get-caller-identity --query Account --output text).dkr
 BUILD_PLATFORMS?=linux amd64
 # Version of EBS CSI Driver to use for E2E testing
 # This should be a git tag or branch
-E2E_EBS_CSI_VERSION?=release-1.47
+E2E_EBS_CSI_VERSION?=release-1.53
 # Tag prefix (used for CI)
 TAG_PREFIX?=
 # Files to rebuild when changed
