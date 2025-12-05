@@ -14,7 +14,7 @@ csi-provisioner:
   eksbuild: '1'
 csi-resizer:
   tag: 'v2.0.0'
-  eksbuild: '1'
+  eksbuild: '2'
 csi-snapshotter:
   tag: 'v8.4.0'
   eksbuild: '2'
