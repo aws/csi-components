@@ -19,7 +19,7 @@ The released images are hosted on the [`csi-components` ECR Public Registry](htt
 | [external-attacher](https://github.com/kubernetes-csi/external-attacher) | v4.10.0-eksbuild.2 | `public.ecr.aws/csi-components/csi-attacher:v4.10.0-eksbuild.2` |
 | [node-driver-registrar](https://github.com/kubernetes-csi/node-driver-registrar) | v2.15.0-eksbuild.2 | `public.ecr.aws/csi-components/csi-node-driver-registrar:v2.15.0-eksbuild.2` |
 | [external-provisioner](https://github.com/kubernetes-csi/external-provisioner) | v6.1.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-provisioner:v6.1.0-eksbuild.1` |
-| [external-resizer](https://github.com/kubernetes-csi/external-resizer) | v2.0.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-resizer:v2.0.0-eksbuild.1` |
+| [external-resizer](https://github.com/kubernetes-csi/external-resizer) | v2.0.0-eksbuild.2 | `public.ecr.aws/csi-components/csi-resizer:v2.0.0-eksbuild.2` |
 | [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter) | v8.4.0-eksbuild.2 | `public.ecr.aws/csi-components/csi-snapshotter:v8.4.0-eksbuild.2` |
 | [livenessprobe](https://github.com/kubernetes-csi/livenessprobe) | v2.17.0-eksbuild.2 | `public.ecr.aws/csi-components/livenessprobe:v2.17.0-eksbuild.2` |
 | [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) | v8.4.0-eksbuild.2 | `public.ecr.aws/csi-components/snapshot-controller:v8.4.0-eksbuild.2` |

@@ -1,15 +1,7 @@
-From 417eaf5ec2b3f17fc660b97a71c9f5856c568351 Mon Sep 17 00:00:00 2001
-From: Eddie Torres <torredil@amazon.com>
-Date: Tue, 18 Nov 2025 17:19:22 +0000
-Subject: [PATCH] Enable use of v1beta1 for VolumeAttributesClass API
+Enable use of v1beta1 for VolumeAttributesClass API
 
 Signed-off-by: Eddie Torres <torredil@amazon.com>
----
- cmd/csi-resizer/main.go               | 10 ++++++---
- pkg/modifycontroller/modify_volume.go |  2 +-
- pkg/modifycontroller/vac_compat.go    | 29 +++++++++++++++++++++++++++
- 3 files changed, 37 insertions(+), 4 deletions(-)
- create mode 100644 pkg/modifycontroller/vac_compat.go
+
 
 diff --git a/cmd/csi-resizer/main.go b/cmd/csi-resizer/main.go
 index 79fa1471..a7ed84eb 100644
@@ -32,8 +24,83 @@ index 79fa1471..a7ed84eb 100644
  			}
  		}
  	}
+diff --git a/pkg/modifycontroller/controller.go b/pkg/modifycontroller/controller.go
+index d86c8d3a..02ae713c 100644
+--- a/pkg/modifycontroller/controller.go
++++ b/pkg/modifycontroller/controller.go
+@@ -19,6 +19,7 @@ package modifycontroller
+ import (
+ 	"context"
+ 	"fmt"
++	"os"
+ 	"sync"
+ 	"time"
+ 
+@@ -38,6 +39,7 @@ import (
+ 	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
+ 	corelisters "k8s.io/client-go/listers/core/v1"
+ 	storagev1listers "k8s.io/client-go/listers/storage/v1"
++	storagev1beta1listers "k8s.io/client-go/listers/storage/v1beta1"
+ 	"k8s.io/client-go/tools/cache"
+ 	"k8s.io/client-go/tools/record"
+ 	"k8s.io/client-go/util/workqueue"
+@@ -63,6 +65,7 @@ type modifyController struct {
+ 	pvcLister           corelisters.PersistentVolumeClaimLister
+ 	pvcListerSynced     cache.InformerSynced
+ 	vacLister           storagev1listers.VolumeAttributesClassLister
++	vacBetaLister       storagev1beta1listers.VolumeAttributesClassLister
+ 	vacListerSynced     cache.InformerSynced
+ 	extraModifyMetadata bool
+ 	// uncertainPVCs tracks PVCs that failed with non-final errors.
+@@ -86,7 +89,6 @@ func NewModifyController(
+ 	pvcRateLimiter workqueue.TypedRateLimiter[string]) ModifyController {
+ 	pvInformer := informerFactory.Core().V1().PersistentVolumes()
+ 	pvcInformer := informerFactory.Core().V1().PersistentVolumeClaims()
+-	vacInformer := informerFactory.Storage().V1().VolumeAttributesClasses()
+ 	eventBroadcaster := record.NewBroadcaster()
+ 	eventBroadcaster.StartStructuredLogging(0)
+ 	eventBroadcaster.StartRecordingToSink(&corev1.EventSinkImpl{Interface: kubeClient.CoreV1().Events(v1.NamespaceAll)})
+@@ -106,13 +108,25 @@ func NewModifyController(
+ 		pvLister:            pvInformer.Lister(),
+ 		pvcListerSynced:     pvcInformer.Informer().HasSynced,
+ 		pvcLister:           pvcInformer.Lister(),
+-		vacListerSynced:     vacInformer.Informer().HasSynced,
+-		vacLister:           vacInformer.Lister(),
+ 		claimQueue:          claimQueue,
+ 		eventRecorder:       eventRecorder,
+ 		extraModifyMetadata: extraModifyMetadata,
+ 		slowSet:             slowset.NewSlowSet(maxRetryInterval),
+ 	}
++
++	// Use v1beta1 VAC informer when fallback is enabled, otherwise use v1
++	if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++		vacInformer := informerFactory.Storage().V1beta1().VolumeAttributesClasses()
++		ctrl.vacListerSynced = vacInformer.Informer().HasSynced
++		ctrl.vacBetaLister = vacInformer.Lister()
++		vacInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{}, resyncPeriod)
++	} else {
++		vacInformer := informerFactory.Storage().V1().VolumeAttributesClasses()
++		ctrl.vacListerSynced = vacInformer.Informer().HasSynced
++		ctrl.vacLister = vacInformer.Lister()
++		vacInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{}, resyncPeriod)
++	}
++
+ 	// Add a resync period as the PVC's request modify can be modified again when we are handling
+ 	// a previous modify request of the same PVC.
+ 	pvcInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{
+@@ -121,10 +135,6 @@ func NewModifyController(
+ 		DeleteFunc: ctrl.deletePVC,
+ 	}, resyncPeriod)
+ 
+-	// Add a resync period as the VAC can be created after a PVC is created
+-	// VAC is immutable
+-	vacInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{}, resyncPeriod)
+-
+ 	return ctrl
+ }
+ 
 diff --git a/pkg/modifycontroller/modify_volume.go b/pkg/modifycontroller/modify_volume.go
-index df05ec59..7dc04a19 100644
+index df05ec59..05f6664c 100644
 --- a/pkg/modifycontroller/modify_volume.go
 +++ b/pkg/modifycontroller/modify_volume.go
 @@ -109,7 +109,7 @@ func (ctrl *modifyController) rolledBack(pvc *v1.PersistentVolumeClaim) (*v1.Per
@@ -41,33 +108,28 @@ index df05ec59..7dc04a19 100644
  
  func (ctrl *modifyController) getTargetVAC(pvc *v1.PersistentVolumeClaim, vacName string) (*storagev1.VolumeAttributesClass, error) {
 -	vac, err := ctrl.vacLister.Get(vacName)
-+	vac, err := getVolumeAttributesClass(ctrl.vacLister, ctrl.kubeClient, vacName)
++	vac, err := getVolumeAttributesClass(ctrl.vacLister, ctrl.vacBetaLister, vacName)
  	// Check if pvcSpecVac is valid and exist
  	if err != nil {
  		if apierrors.IsNotFound(err) {
 diff --git a/pkg/modifycontroller/vac_compat.go b/pkg/modifycontroller/vac_compat.go
 new file mode 100644
-index 00000000..5d52a58d
+index 00000000..6909c441
 --- /dev/null
 +++ b/pkg/modifycontroller/vac_compat.go
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,24 @@
 +package modifycontroller
 +
 +import (
-+	"context"
-+	"os"
-+
 +	storagev1 "k8s.io/api/storage/v1"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/kubernetes"
 +	storagev1listers "k8s.io/client-go/listers/storage/v1"
++	storagev1beta1listers "k8s.io/client-go/listers/storage/v1beta1"
 +)
 +
-+// getVolumeAttributesClass retrieves a VolumeAttributesClass.
-+// If ENABLE_VAC_FALLBACK is set, v1beta1 API is used.
-+func getVolumeAttributesClass(lister storagev1listers.VolumeAttributesClassLister, client kubernetes.Interface, name string) (*storagev1.VolumeAttributesClass, error) {
-+	if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
-+		vacBeta, err := client.StorageV1beta1().VolumeAttributesClasses().Get(context.TODO(), name, metav1.GetOptions{})
++// getVolumeAttributesClass retrieves a VolumeAttributesClass from the appropriate lister.
++func getVolumeAttributesClass(lister storagev1listers.VolumeAttributesClassLister, betaLister storagev1beta1listers.VolumeAttributesClassLister, name string) (*storagev1.VolumeAttributesClass, error) {
++	if betaLister != nil {
++		vacBeta, err := betaLister.Get(name)
 +		if err != nil {
 +			return nil, err
 +		}
@@ -80,6 +142,3 @@ index 00000000..5d52a58d
 +
 +	return lister.Get(name)
 +}
--- 
-2.47.3
-
