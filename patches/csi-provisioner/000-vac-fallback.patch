@@ -1,29 +1,36 @@
-From 448dd603b4975a8d4a640a5fbe66461e2f5f8510 Mon Sep 17 00:00:00 2001
+From 1da98035fc8b58f19580d382cde084fffde25a45 Mon Sep 17 00:00:00 2001
 From: Eddie Torres <torredil@amazon.com>
-Date: Fri, 14 Nov 2025 19:27:57 +0000
-Subject: [PATCH] Enable use of v1beta1 for VolumeAttributesClass API
+Date: Fri, 12 Dec 2025 14:56:24 +0000
+Subject: [PATCH] Enable VAC Beta Fallback
 
 Signed-off-by: Eddie Torres <torredil@amazon.com>
 ---
- cmd/csi-provisioner/csi-provisioner.go | 10 +++++++---
- pkg/controller/controller.go           |  8 ++++----
- pkg/controller/vac_compat.go           | 27 ++++++++++++++++++++++++++
- 3 files changed, 38 insertions(+), 7 deletions(-)
+ cmd/csi-provisioner/csi-provisioner.go | 16 +++++++----
+ pkg/controller/controller.go           |  8 +++---
+ pkg/controller/vac_compat.go           | 40 ++++++++++++++++++++++++++
+ 3 files changed, 55 insertions(+), 9 deletions(-)
  create mode 100644 pkg/controller/vac_compat.go
 
 diff --git a/cmd/csi-provisioner/csi-provisioner.go b/cmd/csi-provisioner/csi-provisioner.go
-index 4cb07e693..8ed347b26 100644
+index 4cb07e693..74de87980 100644
 --- a/cmd/csi-provisioner/csi-provisioner.go
 +++ b/cmd/csi-provisioner/csi-provisioner.go
-@@ -211,9 +211,13 @@ func main() {
- 		volumeAttributesClassV1Enabled, err := features.IsVolumeAttributesClassV1Enabled(clientset.Discovery())
- 		if err == nil && !volumeAttributesClassV1Enabled {
+@@ -208,12 +208,18 @@ func main() {
+ 	}
+ 
+ 	if !utilfeature.DefaultMutableFeatureGate.ExplicitlySet(features.VolumeAttributesClass) {
+-		volumeAttributesClassV1Enabled, err := features.IsVolumeAttributesClassV1Enabled(clientset.Discovery())
+-		if err == nil && !volumeAttributesClassV1Enabled {
++		vacFallbackEnabled := os.Getenv("ENABLE_VAC_FALLBACK") == "true"
++		volumeAttributesClassV1Enabled, vacErr := features.IsVolumeAttributesClassV1Enabled(clientset.Discovery())
++		if vacErr == nil && !volumeAttributesClassV1Enabled {
  			if utilfeature.DefaultMutableFeatureGate.Enabled(features.VolumeAttributesClass) {
 -				klog.InfoS("Disabling VolumeAttributesClass feature gate because the VolumeAttributesClass v1 API is not available")
 -				if err := utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%s=false", features.VolumeAttributesClass)); err != nil {
 -					klog.Fatalf("Failed to disable VolumeAttributesClass feature gate: %v", err)
-+				if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++				if vacFallbackEnabled {
 +					klog.InfoS("VolumeAttributesClass v1 API not available, will use v1beta1 fallback")
++					ctrl.SetUseVACBetaAPI(true)
 +				} else {
 +					klog.InfoS("Disabling VolumeAttributesClass feature gate because the VolumeAttributesClass v1 API is not available")
 +					if err := utilfeature.DefaultMutableFeatureGate.Set(fmt.Sprintf("%s=false", features.VolumeAttributesClass)); err != nil {
@@ -33,10 +40,10 @@ index 4cb07e693..8ed347b26 100644
  			}
  		}
 diff --git a/pkg/controller/controller.go b/pkg/controller/controller.go
-index 62e480bf5..dbd4da81a 100644
+index 280e08e6f..180bbae46 100644
 --- a/pkg/controller/controller.go
 +++ b/pkg/controller/controller.go
-@@ -768,16 +768,16 @@ func (p *csiProvisioner) prepareProvision(ctx context.Context, claim *v1.Persist
+@@ -799,16 +799,16 @@ func (p *csiProvisioner) prepareProvision(ctx context.Context, claim *v1.Persist
  	}
  
  	if vacName != "" {
@@ -59,24 +66,37 @@ index 62e480bf5..dbd4da81a 100644
  	return &prepareProvisionResult{
 diff --git a/pkg/controller/vac_compat.go b/pkg/controller/vac_compat.go
 new file mode 100644
-index 000000000..5eeda496e
+index 000000000..de0787ede
 --- /dev/null
 +++ b/pkg/controller/vac_compat.go
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,40 @@
 +package controller
 +
 +import (
 +	"context"
-+	"os"
 +
 +	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 +	"k8s.io/client-go/kubernetes"
 +)
 +
++var (
++	useVACBetaAPI bool
++)
++
++// SetUseVACBetaAPI sets whether to use the v1beta1 VAC API.
++// This is called during initialization based on API availability and ENABLE_VAC_FALLBACK env.
++func SetUseVACBetaAPI(use bool) {
++	useVACBetaAPI = use
++}
++
++// getUseVACBetaAPI returns whether to use the v1beta1 VAC API.
++func getUseVACBetaAPI() bool {
++	return useVACBetaAPI
++}
++
 +// getVolumeAttributesClass retrieves a VolumeAttributesClass.
-+// If ENABLE_VAC_FALLBACK is set, v1beta1 API is used, otherwise v1.
 +func getVolumeAttributesClass(ctx context.Context, client kubernetes.Interface, name string) (driverName string, parameters map[string]string, err error) {
-+	if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++	if getUseVACBetaAPI() {
 +		vac, err := client.StorageV1beta1().VolumeAttributesClasses().Get(ctx, name, metav1.GetOptions{})
 +		if err != nil {
 +			return "", nil, err

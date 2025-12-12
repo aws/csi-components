@@ -1,21 +1,41 @@
-Enable use of v1beta1 for VolumeAttributesClass API
+From 95414a687902002869f5f47c45e2af8be369bb4a Mon Sep 17 00:00:00 2001
+From: Eddie Torres <torredil@amazon.com>
+Date: Fri, 12 Dec 2025 14:56:54 +0000
+Subject: [PATCH] Enable VAC Beta Fallback
 
 Signed-off-by: Eddie Torres <torredil@amazon.com>
-
+---
+ cmd/csi-resizer/main.go               | 16 +++++++----
+ pkg/modifycontroller/controller.go    | 26 +++++++++++++-----
+ pkg/modifycontroller/modify_volume.go |  2 +-
+ pkg/modifycontroller/vac_compat.go    | 39 +++++++++++++++++++++++++++
+ 4 files changed, 70 insertions(+), 13 deletions(-)
+ create mode 100644 pkg/modifycontroller/vac_compat.go
 
 diff --git a/cmd/csi-resizer/main.go b/cmd/csi-resizer/main.go
-index 79fa1471..a7ed84eb 100644
+index 79fa1471..fbb22fd3 100644
 --- a/cmd/csi-resizer/main.go
 +++ b/cmd/csi-resizer/main.go
-@@ -160,9 +160,13 @@ func main() {
- 		case enabled:
+@@ -153,16 +153,22 @@ func main() {
+ 	}
+ 	// if feature gate is not explicitly set, probe if we have VAC API available
+ 	if !utilfeature.DefaultMutableFeatureGate.ExplicitlySet(features.VolumeAttributesClass) {
+-		enabled, err := features.IsVolumeAttributesClassV1Enabled(kubeClient.Discovery())
++		vacFallbackEnabled := os.Getenv("ENABLE_VAC_FALLBACK") == "true"
++		volumeAttributesClassV1Enabled, err := features.IsVolumeAttributesClassV1Enabled(kubeClient.Discovery())
+ 		switch {
+ 		case err != nil:
+ 			klog.ErrorS(err, "Failed to check VolumeAttributesClass V1 API availability")
+-		case enabled:
++		case volumeAttributesClassV1Enabled:
  			klog.InfoS("VolumeAttributesClass v1 API is available")
  		default:
 -			klog.InfoS("Disabling VolumeAttributesClass feature gate because the VolumeAttributesClass v1 API is not available")
 -			if err := utilfeature.DefaultMutableFeatureGate.OverrideDefault(features.VolumeAttributesClass, false); err != nil {
 -				klog.Fatalf("Failed to disable VolumeAttributesClass feature gate: %v", err)
-+			if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++			if vacFallbackEnabled {
 +				klog.InfoS("VolumeAttributesClass v1 API not available, will use v1beta1 fallback")
++				modifycontroller.SetUseVACBetaAPI(true)
 +			} else {
 +				klog.InfoS("Disabling VolumeAttributesClass feature gate because the VolumeAttributesClass v1 API is not available")
 +				if err := utilfeature.DefaultMutableFeatureGate.OverrideDefault(features.VolumeAttributesClass, false); err != nil {
@@ -25,18 +45,10 @@ index 79fa1471..a7ed84eb 100644
  		}
  	}
 diff --git a/pkg/modifycontroller/controller.go b/pkg/modifycontroller/controller.go
-index d86c8d3a..02ae713c 100644
+index d86c8d3a..11c4be6d 100644
 --- a/pkg/modifycontroller/controller.go
 +++ b/pkg/modifycontroller/controller.go
-@@ -19,6 +19,7 @@ package modifycontroller
- import (
- 	"context"
- 	"fmt"
-+	"os"
- 	"sync"
- 	"time"
- 
-@@ -38,6 +39,7 @@ import (
+@@ -38,6 +38,7 @@ import (
  	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
  	corelisters "k8s.io/client-go/listers/core/v1"
  	storagev1listers "k8s.io/client-go/listers/storage/v1"
@@ -44,7 +56,7 @@ index d86c8d3a..02ae713c 100644
  	"k8s.io/client-go/tools/cache"
  	"k8s.io/client-go/tools/record"
  	"k8s.io/client-go/util/workqueue"
-@@ -63,6 +65,7 @@ type modifyController struct {
+@@ -63,6 +64,7 @@ type modifyController struct {
  	pvcLister           corelisters.PersistentVolumeClaimLister
  	pvcListerSynced     cache.InformerSynced
  	vacLister           storagev1listers.VolumeAttributesClassLister
@@ -52,7 +64,7 @@ index d86c8d3a..02ae713c 100644
  	vacListerSynced     cache.InformerSynced
  	extraModifyMetadata bool
  	// uncertainPVCs tracks PVCs that failed with non-final errors.
-@@ -86,7 +89,6 @@ func NewModifyController(
+@@ -86,7 +88,6 @@ func NewModifyController(
  	pvcRateLimiter workqueue.TypedRateLimiter[string]) ModifyController {
  	pvInformer := informerFactory.Core().V1().PersistentVolumes()
  	pvcInformer := informerFactory.Core().V1().PersistentVolumeClaims()
@@ -60,7 +72,7 @@ index d86c8d3a..02ae713c 100644
  	eventBroadcaster := record.NewBroadcaster()
  	eventBroadcaster.StartStructuredLogging(0)
  	eventBroadcaster.StartRecordingToSink(&corev1.EventSinkImpl{Interface: kubeClient.CoreV1().Events(v1.NamespaceAll)})
-@@ -106,13 +108,25 @@ func NewModifyController(
+@@ -106,13 +107,28 @@ func NewModifyController(
  		pvLister:            pvInformer.Lister(),
  		pvcListerSynced:     pvcInformer.Informer().HasSynced,
  		pvcLister:           pvcInformer.Lister(),
@@ -72,8 +84,9 @@ index d86c8d3a..02ae713c 100644
  		slowSet:             slowset.NewSlowSet(maxRetryInterval),
  	}
 +
-+	// Use v1beta1 VAC informer when fallback is enabled, otherwise use v1
-+	if os.Getenv("ENABLE_VAC_FALLBACK") == "true" {
++	// Use v1beta1 VAC informer when fallback is enabled and v1 is not available,
++	// otherwise use v1. The decision is made at startup based on API availability.
++	if GetUseVACBetaAPI() {
 +		vacInformer := informerFactory.Storage().V1beta1().VolumeAttributesClasses()
 +		ctrl.vacListerSynced = vacInformer.Informer().HasSynced
 +		ctrl.vacBetaLister = vacInformer.Lister()
@@ -82,13 +95,15 @@ index d86c8d3a..02ae713c 100644
 +		vacInformer := informerFactory.Storage().V1().VolumeAttributesClasses()
 +		ctrl.vacListerSynced = vacInformer.Informer().HasSynced
 +		ctrl.vacLister = vacInformer.Lister()
++		// Add a resync period as the VAC can be created after a PVC is created
++		// VAC is immutable
 +		vacInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{}, resyncPeriod)
 +	}
 +
  	// Add a resync period as the PVC's request modify can be modified again when we are handling
  	// a previous modify request of the same PVC.
  	pvcInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{
-@@ -121,10 +135,6 @@ func NewModifyController(
+@@ -121,10 +137,6 @@ func NewModifyController(
  		DeleteFunc: ctrl.deletePVC,
  	}, resyncPeriod)
  
@@ -114,10 +129,10 @@ index df05ec59..05f6664c 100644
  		if apierrors.IsNotFound(err) {
 diff --git a/pkg/modifycontroller/vac_compat.go b/pkg/modifycontroller/vac_compat.go
 new file mode 100644
-index 00000000..6909c441
+index 00000000..4b274965
 --- /dev/null
 +++ b/pkg/modifycontroller/vac_compat.go
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,39 @@
 +package modifycontroller
 +
 +import (
@@ -126,9 +141,24 @@ index 00000000..6909c441
 +	storagev1beta1listers "k8s.io/client-go/listers/storage/v1beta1"
 +)
 +
++var (
++	useVACBetaAPI bool
++)
++
++// SetUseVACBetaAPI sets whether to use the v1beta1 VAC API.
++// This is called during initialization based on API availability and ENABLE_VAC_FALLBACK env.
++func SetUseVACBetaAPI(use bool) {
++	useVACBetaAPI = use
++}
++
++// GetUseVACBetaAPI returns whether to use the v1beta1 VAC API.
++func GetUseVACBetaAPI() bool {
++	return useVACBetaAPI
++}
++
 +// getVolumeAttributesClass retrieves a VolumeAttributesClass from the appropriate lister.
 +func getVolumeAttributesClass(lister storagev1listers.VolumeAttributesClassLister, betaLister storagev1beta1listers.VolumeAttributesClassLister, name string) (*storagev1.VolumeAttributesClass, error) {
-+	if betaLister != nil {
++	if GetUseVACBetaAPI() && betaLister != nil {
 +		vacBeta, err := betaLister.Get(name)
 +		if err != nil {
 +			return nil, err
@@ -142,3 +172,6 @@ index 00000000..6909c441
 +
 +	return lister.Get(name)
 +}
+-- 
+2.47.3
+
