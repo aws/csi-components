@@ -8,10 +8,15 @@
 # These changes are applied AFTER the relevant patch folder
 # and thus must compose on top of them
 
-csi-attacher: {}
+csi-attacher:
+  golang.org/x/crypto: v0.46.0
 csi-node-driver-registrar: {}
-csi-provisioner: {}
-csi-resizer: {}
-csi-snapshotter: {}
+csi-provisioner:
+  golang.org/x/crypto: v0.46.0
+csi-resizer:
+  golang.org/x/crypto: v0.46.0
+csi-snapshotter:
+  golang.org/x/crypto: v0.46.0
 livenessprobe: {}
-snapshot-controller: {}
+snapshot-controller:
+  golang.org/x/crypto: v0.46.0
