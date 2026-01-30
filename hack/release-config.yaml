@@ -23,4 +23,4 @@ livenessprobe:
   eksbuild: '3'
 snapshot-controller:
   tag: 'v8.4.0'
-  eksbuild: '3'
+  eksbuild: '4'
