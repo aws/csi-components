@@ -5,22 +5,22 @@
 
 csi-attacher:
   tag: 'v4.10.0'
-  eksbuild: '3'
+  eksbuild: '4'
 csi-node-driver-registrar:
   tag: 'v2.15.0'
-  eksbuild: '3'
+  eksbuild: '4'
 csi-provisioner:
   tag: 'v6.1.0'
-  eksbuild: '2'
+  eksbuild: '3'
 csi-resizer:
   tag: 'v2.0.0'
-  eksbuild: '3'
+  eksbuild: '4'
 csi-snapshotter:
   tag: 'v8.4.0'
-  eksbuild: '3'
+  eksbuild: '4'
 livenessprobe:
   tag: 'v2.17.0'
-  eksbuild: '3'
+  eksbuild: '4'
 snapshot-controller:
   tag: 'v8.4.0'
   eksbuild: '4'
