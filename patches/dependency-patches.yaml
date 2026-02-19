@@ -13,10 +13,7 @@ csi-attacher:
 csi-node-driver-registrar: {}
 csi-provisioner:
   golang.org/x/crypto: v0.46.0
-csi-resizer:
-  golang.org/x/crypto: v0.46.0
-csi-snapshotter:
-  golang.org/x/crypto: v0.46.0
+csi-resizer: {}
+csi-snapshotter: {}
 livenessprobe: {}
-snapshot-controller:
-  golang.org/x/crypto: v0.46.0
+snapshot-controller: {}
