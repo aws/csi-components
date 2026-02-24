@@ -24,6 +24,7 @@ The released images are hosted on the [`csi-components` ECR Public Registry](htt
 | [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter) | v8.5.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-snapshotter:v8.5.0-eksbuild.1` |
 | [livenessprobe](https://github.com/kubernetes-csi/livenessprobe) | v2.18.0-eksbuild.1 | `public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.1` |
 | [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) | v8.5.0-eksbuild.1 | `public.ecr.aws/csi-components/snapshot-controller:v8.5.0-eksbuild.1` |
+| [volume-modifier-for-k8s](https://github.com/awslabs/volume-modifier-for-k8s) | main-eksbuild.1 | `public.ecr.aws/ebs-csi-driver/volume-modifier-for-k8s:main-eksbuild.1` |
 
 ## Building
 

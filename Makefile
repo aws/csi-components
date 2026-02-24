@@ -50,6 +50,7 @@ setup-ecr:
 	aws ecr create-repository --region us-west-2 --repository-name csi-snapshotter || true
 	aws ecr create-repository --region us-west-2 --repository-name livenessprobe || true
 	aws ecr create-repository --region us-west-2 --repository-name snapshot-controller || true
+	aws ecr create-repository --region us-west-2 --repository-name volume-modifier-for-k8s || true
 
 # Helper target to bump all images to the latest version
 .PHONY: bump-versions
@@ -75,7 +76,7 @@ bin/%: $(BUILD_SOURCES) | bin build
 	@BUILD_PLATFORMS="$(BUILD_PLATFORMS)" hack/build-binary.sh $*
 
 .PHONY: all
-all: bin/csi-snapshotter bin/csi-attacher bin/csi-provisioner bin/csi-resizer bin/csi-node-driver-registrar bin/livenessprobe bin/snapshot-controller
+all: bin/csi-snapshotter bin/csi-attacher bin/csi-provisioner bin/csi-resizer bin/csi-node-driver-registrar bin/livenessprobe bin/snapshot-controller bin/volume-modifier-for-k8s
 
 ## Container image targets
 
@@ -83,7 +84,7 @@ image/%: $(BUILD_SOURCES) Dockerfile .dockerignore
 	@TAG_PREFIX="$(TAG_PREFIX)" REGISTRY="$(REGISTRY)" hack/build-image.sh $*
 
 .PHONY: all-image
-all-image: image/csi-snapshotter image/csi-attacher image/csi-provisioner image/csi-resizer image/csi-node-driver-registrar image/livenessprobe image/snapshot-controller
+all-image: image/csi-snapshotter image/csi-attacher image/csi-provisioner image/csi-resizer image/csi-node-driver-registrar image/livenessprobe image/snapshot-controller image/volume-modifier-for-k8s
 
 ## Trivy (image scanner) targets
 
@@ -91,7 +92,7 @@ trivy/%: output
 	@TAG_PREFIX="$(TAG_PREFIX)" REGISTRY="$(REGISTRY)" OUTPUT_SARIF="$(OUTPUT_SARIF)" hack/trivy.sh $*
 
 .PHONY: all-trivy
-all-trivy: trivy/csi-snapshotter trivy/csi-attacher trivy/csi-provisioner trivy/csi-resizer trivy/csi-node-driver-registrar trivy/livenessprobe trivy/snapshot-controller
+all-trivy: trivy/csi-snapshotter trivy/csi-attacher trivy/csi-provisioner trivy/csi-resizer trivy/csi-node-driver-registrar trivy/livenessprobe trivy/snapshot-controller trivy/volume-modifier-for-k8s
 
 ## E2E targets
 

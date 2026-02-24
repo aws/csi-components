@@ -24,3 +24,6 @@ livenessprobe:
 snapshot-controller:
   tag: 'v8.5.0'
   eksbuild: '1'
+volume-modifier-for-k8s:
+  tag: 'main'
+  eksbuild: '1'

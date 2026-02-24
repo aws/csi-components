@@ -29,3 +29,7 @@ livenessprobe:
 snapshot-controller:
   repo: https://github.com/kubernetes-csi/external-snapshotter
   targets: [amd64-linux-al2023, arm64-linux-al2023]
+volume-modifier-for-k8s:
+  repo: https://github.com/ConnorJC3/volume-modifier-for-k8s
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
+  e2e-parameter: sidecars.volumemodifier.image
