@@ -28,10 +28,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8
+        uses: aws-actions/configure-aws-credentials@3bd622937f2b34163aaabb7edcded419d2b75fda
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::702945799511:role/github-actions-csi-components
@@ -40,7 +40,7 @@ jobs:
       # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
       # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076
+        uses: aws-actions/amazon-ecr-login@fe725d47d3009d901b44f3df285a6dc9d438e63a
         env:
           AWS_REGION: us-east-1
         with:
@@ -53,6 +53,6 @@ jobs:
         run: make all-trivy
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@0499de31b99561a6d14a36a5f662c2a54f91beee
+        uses: github/codeql-action/upload-sarif@b0ed4dedcb6dac75e55f599c0ac323404c92645a
         with:
           sarif_file: output/
