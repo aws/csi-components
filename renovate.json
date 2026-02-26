@@ -7,6 +7,7 @@
   "commitBodyTable": true,
   "automerge": true,
   "platformAutomerge": true,
+  "assignAutomerge": true,
   "rebaseWhen": "behind-base-branch",
   "separateMultipleMajor": true,
   "packageRules": [
@@ -25,12 +26,54 @@
   ],
   "customManagers": [
     {
+      "description": "EBS CSI Driver version for E2E testing",
       "customType": "regex",
       "managerFilePatterns": ["Makefile"],
       "matchStrings": ["E2E_EBS_CSI_VERSION\\?=release-(?<currentValue>\\d+\\.\\d+)"],
       "depNameTemplate": "kubernetes-sigs/aws-ebs-csi-driver",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>\\d+\\.\\d+)\\.\\d+$"
+    },
+    {
+      "description": "Go version in GitHub Actions workflows",
+      "customType": "regex",
+      "managerFilePatterns": [".github/workflows/*.{yaml,yml}"],
+      "matchStrings": ["go-version:\\s*'(?<currentValue>\\d+\\.\\d+)'"],
+      "depNameTemplate": "go",
+      "datasourceTemplate": "golang-version"
+    },
+    {
+      "description": "QEMU binfmt-misc image in workflows",
+      "customType": "regex",
+      "managerFilePatterns": [".github/workflows/*.{yaml,yml}"],
+      "matchStrings": ["image:\\s*public\\.ecr\\.aws/eks-distro-build-tooling/binfmt-misc:qemu-v(?<currentValue>[\\d.]+)"],
+      "depNameTemplate": "public.ecr.aws/eks-distro-build-tooling/binfmt-misc",
+      "datasourceTemplate": "docker",
+      "extractVersionTemplate": "^qemu-v(?<version>.+)$"
+    },
+    {
+      "description": "Trivy image in shell scripts",
+      "customType": "regex",
+      "managerFilePatterns": ["hack/*.sh"],
+      "matchStrings": ["public\\.ecr\\.aws/aquasecurity/trivy:(?<currentValue>[\\d.]+)"],
+      "depNameTemplate": "public.ecr.aws/aquasecurity/trivy",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "description": "go install commands in Dockerfiles",
+      "customType": "regex",
+      "managerFilePatterns": ["Dockerfile*"],
+      "matchStrings": ["go install (?<depName>github\\.com\\/[^@]+)@v(?<currentValue>[\\d.]+)"],
+      "datasourceTemplate": "go"
+    },
+    {
+      "description": "yq binary download in workflows",
+      "customType": "regex",
+      "managerFilePatterns": [".github/workflows/*.{yaml,yml}"],
+      "matchStrings": ["mikefarah/yq/releases/download/v(?<currentValue>[\\d.]+)/"],
+      "depNameTemplate": "mikefarah/yq",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
     }
   ]
 }
