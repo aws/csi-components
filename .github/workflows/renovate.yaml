@@ -14,8 +14,11 @@
 
 name: Renovate
 on:
+  push:
+    branches:
+      - main
   schedule:
-    - cron: '0 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,3 +38,4 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           RENOVATE_REPOSITORIES: '["aws/csi-components"]'
+          RENOVATE_GIT_AUTHOR: 'CSI Components Renovate <csi-components-e2e@amazon.com>'

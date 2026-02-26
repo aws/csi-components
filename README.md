@@ -3,6 +3,7 @@
 [![E2E Tests](https://github.com/aws/csi-components/actions/workflows/e2e.yaml/badge.svg?event=push)](https://github.com/aws/csi-components/actions/workflows/e2e.yaml)
 [![Push Staging Images](https://github.com/aws/csi-components/actions/workflows/release.yaml/badge.svg?event=push)](https://github.com/aws/csi-components/actions/workflows/release.yaml)
 [![AWS Janitor](https://github.com/aws/csi-components/actions/workflows/janitor.yaml/badge.svg)](https://github.com/aws/csi-components/actions/workflows/janitor.yaml)
+[![Renovate](https://github.com/aws/csi-components/actions/workflows/renovate.yaml/badge.svg)](https://github.com/aws/csi-components/actions/workflows/renovate.yaml)
 
 ## Overview
 
