@@ -6,6 +6,7 @@
   "pinDigests": true,
   "commitBodyTable": true,
   "automerge": true,
+  "automergeType": "pr",
   "platformAutomerge": true,
   "rebaseWhen": "behind-base-branch",
   "separateMultipleMajor": true,
