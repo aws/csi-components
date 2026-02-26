@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["dependencies"],
+  "reviewers": ["team:ebs-csi-driver"],
+  "pinDigests": true,
+  "commitBodyTable": true,
+  "automerge": true,
+  "platformAutomerge": true,
+  "rebaseWhen": "behind-base-branch",
+  "separateMultipleMajor": true,
+  "packageRules": [
+    {
+      "description": "Group all non-major updates into a single PR",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest", "pinDigest", "lockFileMaintenance", "bump"],
+      "groupName": "all non-major dependencies"
+    },
+    {
+      "description": "Disable non-digest updates for base images",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["public.ecr.aws/eks-distro-build-tooling/**"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "enabled": false
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["Makefile"],
+      "matchStrings": ["E2E_EBS_CSI_VERSION\\?=release-(?<currentValue>\\d+\\.\\d+)"],
+      "depNameTemplate": "kubernetes-sigs/aws-ebs-csi-driver",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>\\d+\\.\\d+)\\.\\d+$"
+    }
+  ]
+}
