@@ -16,8 +16,8 @@ FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.26@sha256:
 RUN go env -w GOCACHE=/gocache GOMODCACHE=/gomodcache
 ARG GOPROXY
 # Dependencies not in builder image: yq and go-licenses
-RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache go install github.com/mikefarah/yq/v4@latest
-RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache go install github.com/google/go-licenses@latest
+RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache go install github.com/mikefarah/yq/v4@v4.52.4
+RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache go install github.com/google/go-licenses/v2@v2.0.1
 
 WORKDIR /app/
 COPY . .
@@ -26,7 +26,12 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache mak
 
 # Our base image, which is Amazon Linux based, automatically includes relevant licenses for the OS dependencies
 # However, the go dependencies may generated additional license requires, which we copy to the final image
-RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd /app/build/$ENTRYPOINT && go-licenses save ./... --save_path /app/licenses/
+# GOFLAGS=-mod=mod works around https://github.com/google/go-licenses/issues/310 (vendor + local replace)
+# The for loop copies the root LICENSE into local replace targets that lack their own LICENSE file
+RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd /app/build/$ENTRYPOINT && \
+    for d in $(sed -n 's|.*=> \./\([^[:space:]]*\).*|\1|p' go.mod); do if [ -d "$d" ] && [ ! -f "$d/LICENSE" ] && [ -f LICENSE ]; then cp LICENSE "$d/LICENSE"; fi; done && \
+    export GOFLAGS=-mod=mod && \
+    go-licenses save $(go list ./...) --save_path /app/licenses/
 
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:d230ec5820c790a53358b0cf25b362376f12c4578c4a567ebef79f4fbb94f9ca AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
