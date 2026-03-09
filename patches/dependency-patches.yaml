@@ -17,3 +17,4 @@ csi-resizer: {}
 csi-snapshotter: {}
 livenessprobe: {}
 snapshot-controller: {}
+volume-modifier-for-k8s: {}

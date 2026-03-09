@@ -73,6 +73,7 @@ jobs:
         run: |
           wget https://github.com/mikefarah/yq/releases/download/v4.52.4/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
+          make setup-ecr
           make -j `nproc` all-image
   trivy:
     needs: build-images
