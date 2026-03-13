@@ -40,7 +40,7 @@ jobs:
       # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
       # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+        uses: aws-actions/amazon-ecr-login@c962da2960ed15f492addc26fffa274485265950 # v2.0.2
         env:
           AWS_REGION: us-east-1
         with:
