@@ -10,10 +10,11 @@
 
 csi-attacher:
   golang.org/x/crypto: v0.46.0
+  go.opentelemetry.io/otel/sdk: v1.42.0
 csi-node-driver-registrar: {}
-csi-provisioner:
-  golang.org/x/crypto: v0.46.0
-csi-resizer: {}
+csi-provisioner: {}
+csi-resizer:
+  go.opentelemetry.io/otel/sdk: v1.42.0
 csi-snapshotter: {}
 livenessprobe: {}
 snapshot-controller: {}
