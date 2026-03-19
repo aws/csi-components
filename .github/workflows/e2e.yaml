@@ -137,6 +137,7 @@ jobs:
           - test-e2e-external-arm64
           - test-e2e-external-eks-windows
           - test-e2e-external-eks-bottlerocket
+          - test-e2e-single-az
     runs-on:
       - codebuild-csi-components-e2e-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
