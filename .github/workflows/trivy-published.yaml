@@ -37,18 +37,23 @@ jobs:
           role-to-assume: arn:aws:iam::702945799511:role/github-actions-csi-components
           role-session-name: GithubActionsTrivy
 
-      # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
-      # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
-      - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 # v2.1.0
-        env:
-          AWS_REGION: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
-          registry-type: public
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::797935246662:role/github-actions-csi-components
+          role-session-name: GithubActionsTrivy
+
+      # We use the staging repo because it ensures the images are always available (even while a
+      # release is ongoing) and we expect it to be bit for bit identical to the published images
+      # 
+      # This also allows us to easily scan all images in a single place as some images (e.g.
+      # the volume-modifier-for-k8s image) are promoted to separate registries
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@261fc3d4806db1fa66a15cc11113c456db8870a7 # v2.1.0
 
       - name: Run Trivy (SARIF Output)
         env:
-          REGISTRY: public.ecr.aws/csi-components
           OUTPUT_SARIF: 'true'
         run: make all-trivy
 
