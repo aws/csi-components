@@ -27,3 +27,5 @@ snapshot-controller:
 volume-modifier-for-k8s:
   tag: 'v0.9.4'
   eksbuild: '1'
+  registry: 'public.ecr.aws/ebs-csi-driver'
+  tagPrefix: false

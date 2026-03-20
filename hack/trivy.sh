@@ -17,15 +17,22 @@
 set -euo pipefail
 BASE_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 IMAGE="${1}"
-TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
+TAG_PREFIX_ENABLED="$(yq ".${IMAGE}.tagPrefix // true" "${BASE_DIR}/release-config.yaml")"
+if [ "${TAG_PREFIX_ENABLED}" = "true" ]; then
+  TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
+else
+  TAG=$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
+fi
 EKSBUILD="$(yq ".${IMAGE}.eksbuild" "${BASE_DIR}/release-config.yaml")"
+IMAGE_REGISTRY="$(yq ".${IMAGE}.registry // \"\"" "${BASE_DIR}/release-config.yaml")"
+IMAGE_REGISTRY="${IMAGE_REGISTRY:-${REGISTRY}}"
 
 # Pulling ensures we always have the latest image (Trivy will skip pull sometimes)
-docker pull -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+docker pull -q "${IMAGE_REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
 if [ -n "${OUTPUT_SARIF:+x}" ]; then
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:0.69.3 image -f sarif "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:0.69.3 image -f sarif "${IMAGE_REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
   # Required by GitHub to upload multiple SARIF files: https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning#uploading-more-than-one-sarif-file-for-a-commit
   yq -o json -i ".runs[].automationDetails.id = \"trivy/${IMAGE}/$(date +%s)\"" "${BASE_DIR}/../output/${IMAGE}.sarif"
 else
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:0.69.3 image -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro public.ecr.aws/aquasecurity/trivy:0.69.3 image -q "${IMAGE_REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
 fi
