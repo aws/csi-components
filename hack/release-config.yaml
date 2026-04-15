@@ -5,25 +5,25 @@
 
 csi-attacher:
   tag: 'v4.11.0'
-  eksbuild: '3'
+  eksbuild: '4'
 csi-node-driver-registrar:
   tag: 'v2.16.0'
-  eksbuild: '3'
+  eksbuild: '4'
 csi-provisioner:
   tag: 'v6.2.0'
-  eksbuild: '2'
+  eksbuild: '3'
 csi-resizer:
   tag: 'v2.1.0'
-  eksbuild: '3'
+  eksbuild: '4'
 csi-snapshotter:
   tag: 'v8.5.0'
-  eksbuild: '3'
+  eksbuild: '4'
 livenessprobe:
   tag: 'v2.18.0'
-  eksbuild: '3'
+  eksbuild: '4'
 snapshot-controller:
   tag: 'v8.5.0'
-  eksbuild: '3'
+  eksbuild: '4'
 volume-modifier-for-k8s:
   tag: 'v0.9.4'
-  eksbuild: '1'
+  eksbuild: '2'

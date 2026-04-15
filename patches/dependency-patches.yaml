@@ -10,19 +10,22 @@
 
 csi-attacher:
   golang.org/x/crypto: v0.46.0
-  go.opentelemetry.io/otel/sdk: v1.42.0
+  go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
 csi-node-driver-registrar:
   google.golang.org/grpc: v1.79.3
 csi-provisioner:
+  go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
 csi-resizer:
-  go.opentelemetry.io/otel/sdk: v1.42.0
+  go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
 csi-snapshotter:
+  go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
 livenessprobe: 
   google.golang.org/grpc: v1.79.3
 snapshot-controller: 
+  go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
 volume-modifier-for-k8s: {}
