@@ -13,6 +13,7 @@ csi-attacher:
   go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
 csi-node-driver-registrar:
+  go.opentelemetry.io/otel: v1.43.0
   google.golang.org/grpc: v1.79.3
 csi-provisioner:
   go.opentelemetry.io/otel/sdk: v1.43.0
@@ -23,7 +24,8 @@ csi-resizer:
 csi-snapshotter:
   go.opentelemetry.io/otel/sdk: v1.43.0
   google.golang.org/grpc: v1.79.3
-livenessprobe: 
+livenessprobe:
+  go.opentelemetry.io/otel: v1.43.0
   google.golang.org/grpc: v1.79.3
 snapshot-controller: 
   go.opentelemetry.io/otel/sdk: v1.43.0
