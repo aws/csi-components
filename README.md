@@ -17,14 +17,14 @@ The released images are hosted on the [`csi-components` ECR Public Registry](htt
 
 | Project | Latest Released Version | Image Pull URI |
 | ------------- | ------------- | ------------- |
-| [external-attacher](https://github.com/kubernetes-csi/external-attacher) | v4.11.0-eksbuild.6 | `public.ecr.aws/csi-components/csi-attacher:v4.11.0-eksbuild.6` |
-| [node-driver-registrar](https://github.com/kubernetes-csi/node-driver-registrar) | v2.16.0-eksbuild.6 | `public.ecr.aws/csi-components/csi-node-driver-registrar:v2.16.0-eksbuild.6` |
-| [external-provisioner](https://github.com/kubernetes-csi/external-provisioner) | v6.2.0-eksbuild.5 | `public.ecr.aws/csi-components/csi-provisioner:v6.2.0-eksbuild.5` |
-| [external-resizer](https://github.com/kubernetes-csi/external-resizer) | v2.1.0-eksbuild.6 | `public.ecr.aws/csi-components/csi-resizer:v2.1.0-eksbuild.6` |
-| [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter) | v8.5.0-eksbuild.6 | `public.ecr.aws/csi-components/csi-snapshotter:v8.5.0-eksbuild.6` |
-| [livenessprobe](https://github.com/kubernetes-csi/livenessprobe) | v2.18.0-eksbuild.6 | `public.ecr.aws/csi-components/livenessprobe:v2.18.0-eksbuild.6` |
-| [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) | v8.5.0-eksbuild.6 | `public.ecr.aws/csi-components/snapshot-controller:v8.5.0-eksbuild.6` |
-| [volume-modifier-for-k8s](https://github.com/awslabs/volume-modifier-for-k8s) | v0.9.4-eksbuild.4 | `public.ecr.aws/ebs-csi-driver/volume-modifier-for-k8s:v0.9.4-eksbuild.4` |
+| [external-attacher](https://github.com/kubernetes-csi/external-attacher) | v4.12.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-attacher:v4.12.0-eksbuild.1` |
+| [node-driver-registrar](https://github.com/kubernetes-csi/node-driver-registrar) | v2.17.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-node-driver-registrar:v2.17.0-eksbuild.1` |
+| [external-provisioner](https://github.com/kubernetes-csi/external-provisioner) | v6.2.0-eksbuild.6 | `public.ecr.aws/csi-components/csi-provisioner:v6.2.0-eksbuild.6` |
+| [external-resizer](https://github.com/kubernetes-csi/external-resizer) | v2.2.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-resizer:v2.2.0-eksbuild.1` |
+| [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter) | v8.6.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-snapshotter:v8.6.0-eksbuild.1` |
+| [livenessprobe](https://github.com/kubernetes-csi/livenessprobe) | v2.19.0-eksbuild.1 | `public.ecr.aws/csi-components/livenessprobe:v2.19.0-eksbuild.1` |
+| [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) | v8.6.0-eksbuild.1 | `public.ecr.aws/csi-components/snapshot-controller:v8.6.0-eksbuild.1` |
+| [volume-modifier-for-k8s](https://github.com/awslabs/volume-modifier-for-k8s) | v0.9.5-eksbuild.1 | `public.ecr.aws/ebs-csi-driver/volume-modifier-for-k8s:v0.9.5-eksbuild.1` |
 
 ## Building
 
