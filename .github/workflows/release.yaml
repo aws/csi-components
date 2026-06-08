@@ -67,6 +67,6 @@ jobs:
       # yq isn't pre-installed on the CodeBuild runners, so install it here
       - name: Build Images
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.53.2/yq_linux_amd64 -O /usr/local/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           make -j `nproc` all-image
