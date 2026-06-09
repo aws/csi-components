@@ -49,3 +49,9 @@ COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
+
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:d352efedbc8ac1346e3747f9df14bae87d04c431b521656fcbd57859122640fc AS windows-ltsc2025
+COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
+COPY --from=builder /app/licenses/ /licenses/
+USER ContainerAdministrator
+ENTRYPOINT ["/$ENTRYPOINT.exe"]

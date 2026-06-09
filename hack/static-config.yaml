@@ -8,7 +8,7 @@ csi-attacher:
   e2e-parameter: sidecars.attacher.image
 csi-node-driver-registrar:
   repo: https://github.com/kubernetes-csi/node-driver-registrar
-  targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022]
+  targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022, amd64-windows-ltsc2025]
   e2e-parameter: sidecars.nodeDriverRegistrar.image
 csi-provisioner:
   repo: https://github.com/kubernetes-csi/external-provisioner
@@ -24,7 +24,7 @@ csi-snapshotter:
   e2e-parameter: sidecars.snapshotter.image
 livenessprobe:
   repo: https://github.com/kubernetes-csi/livenessprobe
-  targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022]
+  targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022, amd64-windows-ltsc2025]
   e2e-parameter: sidecars.livenessProbe.image
 snapshot-controller:
   repo: https://github.com/kubernetes-csi/external-snapshotter
