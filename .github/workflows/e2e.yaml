@@ -52,10 +52,10 @@ jobs:
           role-session-name: GithubActionsSetup
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
 
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         env:
           AWS_REGION: us-east-1
         with:
@@ -97,12 +97,12 @@ jobs:
           role-session-name: GithubActionsTrivy
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
 
       # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
       # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         env:
           AWS_REGION: us-east-1
         with:
@@ -161,7 +161,7 @@ jobs:
           role-session-name: GithubActionsE2E
 
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         env:
           AWS_REGION: us-east-1
         with:
