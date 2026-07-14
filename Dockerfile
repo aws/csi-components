@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.26@sha256:983a0823d3dab83604654972fe6bbda13142a7c57f987804fbdddb9d47dad9ec AS builder
+FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.26@sha256:d52df9c279840adf958d017ebb275651ed8338b953d39817bc3633a2e6b1bbcc AS builder
 RUN go env -w GOCACHE=/gocache GOMODCACHE=/gomodcache
 ARG GOPROXY
 # Dependencies not in builder image: yq and go-licenses
@@ -33,24 +33,24 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd 
     export GOFLAGS=-mod=mod && \
     go-licenses save $(go list ./...) --save_path /app/licenses/
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:20f087a7e5d60be3037d20ce5c0d4c5fa0b22f57f246b6ca60296181bbe7b4c6 AS linux-al2023
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:4e65667ad802629fae28dadf8c4cf4a726eeba08cf6eaf6495e46e3098b2b7e0 AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
 COPY --from=builder /app/licenses/ /licenses/
 ENTRYPOINT ["/$ENTRYPOINT"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:42e03d8f623138eeeba6be556456d90d7c3bd43f5013aed46213665613d7b474 AS windows-ltsc2019
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:f675492eac179b8fb95c41d5a6228a6ac6542423a45eb9536cd2e48b970ca0de AS windows-ltsc2019
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:401f3644d7be7da77b84a67a8752d6a7396f3c392d042afa5bbf2863bc270898 AS windows-ltsc2022
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:6e42e8bddea6f9bbb940b57ffd1608a0ce4e1313efcdf6574f4e50695501f0d2 AS windows-ltsc2022
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:506605084e2233b2751c36b73dcc5eb3b8c203f168203762a7acf2ea0c5dbc4b AS windows-ltsc2025
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:884ef5ee98b2978f5b52de7ff44b6a5d030edbb710f13221aa37289b0ba9b14e AS windows-ltsc2025
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
