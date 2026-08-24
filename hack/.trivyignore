@@ -1,0 +1,4 @@
+# This is a persistent warning about the openpgp module being deprecated/unsafe to use
+# We don't use it, but Trivy cannot distinguish beyond the package level and sees that
+# we are using golang.org/x/crypto and flags this "CVE" in our containers
+GO-2026-5932
