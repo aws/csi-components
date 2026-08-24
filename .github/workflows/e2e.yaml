@@ -52,10 +52,10 @@ jobs:
           role-session-name: GithubActionsSetup
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
 
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
         env:
           AWS_REGION: us-east-1
         with:
@@ -73,12 +73,12 @@ jobs:
           image: public.ecr.aws/eks-distro-build-tooling/binfmt-misc:qemu-v7.0.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       # yq isn't pre-installed on the CodeBuild runners, so install it here
       - name: Build Images
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_linux_amd64 -O /usr/local/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.53.6/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           make setup-ecr
           make -j `nproc` all-image
@@ -97,12 +97,12 @@ jobs:
           role-session-name: GithubActionsTrivy
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
 
       # ECR Public has a per-IP ratelist for unauthenticated users, which is often hit on
       # GitHub actions due to jobs sharing IPs - this ensures we don't get rate limited
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
         env:
           AWS_REGION: us-east-1
         with:
@@ -161,7 +161,7 @@ jobs:
           role-session-name: GithubActionsE2E
 
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
         env:
           AWS_REGION: us-east-1
         with:
@@ -180,11 +180,11 @@ jobs:
           image: public.ecr.aws/eks-distro-build-tooling/binfmt-misc:qemu-v7.0.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       # yq isn't pre-installed on the CodeBuild runners, so install it here
       - name: Run Tests
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.53.3/yq_linux_amd64 -O /usr/local/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.53.6/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           make e2e/${{ matrix.test }}
