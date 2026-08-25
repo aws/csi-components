@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.27@sha256:f42f8545265b7fe4124ecdd50a7778c15d5e3fc4d0af648e508e4f4c6a4c572b AS builder
+FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.27@sha256:0ecdc2a9f6156af6451080bfe3d8382a662fcc4e209608c6f919e643453514c1 AS builder
 RUN go env -w GOCACHE=/gocache GOMODCACHE=/gomodcache
 ARG GOPROXY
 # Dependencies not in builder image: yq and go-licenses
