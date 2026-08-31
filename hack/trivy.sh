@@ -17,15 +17,23 @@
 set -euo pipefail
 BASE_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 IMAGE="${1}"
-TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
-EKSBUILD="$(yq ".${IMAGE}.eksbuild" "${BASE_DIR}/release-config.yaml")"
+
+if [ "${IMAGE}" = "aws-ebs-csi-driver" ]; then
+  CHART_URL="https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/${E2E_EBS_CSI_VERSION}/charts/aws-ebs-csi-driver/Chart.yaml"
+  DRIVER_VERSION="$(curl -fsSL "${CHART_URL}" | yq '.appVersion')"
+  IMAGE_REF="public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver:v${DRIVER_VERSION}"
+else
+  TAG=${TAG_PREFIX}$(yq ".${IMAGE}.tag" "${BASE_DIR}/release-config.yaml")
+  EKSBUILD="$(yq ".${IMAGE}.eksbuild" "${BASE_DIR}/release-config.yaml")"
+  IMAGE_REF="${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+fi
 
 # Pulling ensures we always have the latest image (Trivy will skip pull sometimes)
-docker pull -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+docker pull -q "${IMAGE_REF}"
 if [ -n "${OUTPUT_SARIF:+x}" ]; then
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.74.0 image --ignorefile /.trivyignore -f sarif "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.74.0 image --ignorefile /.trivyignore -f sarif "${IMAGE_REF}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
   # Required by GitHub to upload multiple SARIF files: https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning#uploading-more-than-one-sarif-file-for-a-commit
   yq -o json -i ".runs[].automationDetails.id = \"trivy/${IMAGE}/$(date +%s)\"" "${BASE_DIR}/../output/${IMAGE}.sarif"
 else
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.74.0 image --ignorefile /.trivyignore -q "${REGISTRY}/${IMAGE}:${TAG}-eksbuild.${EKSBUILD}"
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.74.0 image --ignorefile /.trivyignore -q "${IMAGE_REF}"
 fi
