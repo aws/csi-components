@@ -89,10 +89,10 @@ all-image: image/csi-snapshotter image/csi-attacher image/csi-provisioner image/
 ## Trivy (image scanner) targets
 
 trivy/%: output
-	@TAG_PREFIX="$(TAG_PREFIX)" REGISTRY="$(REGISTRY)" OUTPUT_SARIF="$(OUTPUT_SARIF)" hack/trivy.sh $*
+	@TAG_PREFIX="$(TAG_PREFIX)" REGISTRY="$(REGISTRY)" OUTPUT_SARIF="$(OUTPUT_SARIF)" E2E_EBS_CSI_VERSION="$(E2E_EBS_CSI_VERSION)" hack/trivy.sh $*
 
 .PHONY: all-trivy
-all-trivy: trivy/csi-snapshotter trivy/csi-attacher trivy/csi-provisioner trivy/csi-resizer trivy/csi-node-driver-registrar trivy/livenessprobe trivy/snapshot-controller trivy/volume-modifier-for-k8s
+all-trivy: trivy/csi-snapshotter trivy/csi-attacher trivy/csi-provisioner trivy/csi-resizer trivy/csi-node-driver-registrar trivy/livenessprobe trivy/snapshot-controller trivy/volume-modifier-for-k8s trivy/aws-ebs-csi-driver
 
 ## E2E targets
 
