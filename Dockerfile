@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.27@sha256:7543a96ce82c8e9003cae079ee3e0bc5b7799df8eed2a041e403af0d31fa4e67 AS builder
+FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.27@sha256:512690a5660563b57d37ecc31129e7f136e831db2aed24a1dbeb8ad7380dc0fa AS builder
 RUN go env -w GOCACHE=/gocache GOMODCACHE=/gomodcache
 ARG GOPROXY
 # Dependencies not in builder image: yq and go-licenses
@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd 
     export GOFLAGS=-mod=mod && \
     go-licenses save $(go list ./...) --save_path /app/licenses/
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:8a94c96164c6c1f2a2f52d033ac134f8d0416ff18ffb5aa3a05cac87a685cc6b AS linux-al2023
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:b036cd1b3307f48366fe6fb9dddd055adb48fa453cfafba2a0412b157c06f820 AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
 COPY --from=builder /app/licenses/ /licenses/
 ENTRYPOINT ["/$ENTRYPOINT"]
