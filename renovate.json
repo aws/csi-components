@@ -17,6 +17,12 @@
       "groupName": "all non-major dependencies"
     },
     {
+      "description": "Disable digest pinning for GitHub Actions inputs",
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["uses-with"],
+      "pinDigests": false
+    },
+    {
       "description": "Disable non-digest updates for base images",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["public.ecr.aws/eks-distro-build-tooling/**"],
@@ -33,14 +39,6 @@
       "depNameTemplate": "kubernetes-sigs/aws-ebs-csi-driver",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>\\d+\\.\\d+)\\.\\d+$"
-    },
-    {
-      "description": "Go version in GitHub Actions workflows",
-      "customType": "regex",
-      "managerFilePatterns": [".github/workflows/*.{yaml,yml}"],
-      "matchStrings": ["go-version:\\s*'(?<currentValue>\\d+\\.\\d+)'"],
-      "depNameTemplate": "go",
-      "datasourceTemplate": "golang-version"
     },
     {
       "description": "QEMU binfmt-misc image in workflows",
