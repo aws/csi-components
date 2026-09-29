@@ -36,22 +36,26 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd 
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:2a6bd21e213302bf846abcae8767c7fff15277ec6f78efc72c551812c2a64618 AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
 COPY --from=builder /app/licenses/ /licenses/
+ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT"]
 
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:b4e46d9241a95ccc50ef73123714acb295472737a01cba52577dab153fdadf49 AS windows-ltsc2019
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
+ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:75f0e07262f526660444f06f5b27c834580802808489a8e6f2b7f6db11310571 AS windows-ltsc2022
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
+ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
 FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:d9c384028f72213ede7e69bd473e1dc24b35e4f9538eb4d829b02492393a3fb9 AS windows-ltsc2025
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
+ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]

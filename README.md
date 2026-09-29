@@ -11,6 +11,10 @@ This repository contains the tooling used to build minimal Amazon Linux based ve
 
 These images are used in the official releases of the [EBS CSI Driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/) versions `v1.45.0` and later.
 
+## FIPS
+
+The binaries are built with Go's certified FIPS 140-3 cryptographic module. The images set FIPS mode off by default. Set `GODEBUG=fips140=on` on a container to enable FIPS mode for that container.
+
 ## Images
 
 The released images are hosted on the [`csi-components` ECR Public Registry](https://gallery.ecr.aws/csi-components).
