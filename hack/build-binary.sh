@@ -52,5 +52,5 @@ done
 (cd "${BASE_DIR}/../build/${BINARY}" && go mod tidy && go mod vendor && go mod download)
 # csi-release-utils requires arguments *as an argument to make*
 # Passing arguments as environment variables won't work!
-make -C "${BASE_DIR}/../build/${BINARY}" BUILD_PLATFORMS="${BUILD_PLATFORMS}" REV="${TAG}-eksbuild.${EKSBUILD}"
+GOFIPS140=certified make -C "${BASE_DIR}/../build/${BINARY}" BUILD_PLATFORMS="${BUILD_PLATFORMS}" REV="${TAG}-eksbuild.${EKSBUILD}"
 cp "${BASE_DIR}/../build/${BINARY}/bin/${BINARY}" "${BASE_DIR}/../bin/${BINARY}"
