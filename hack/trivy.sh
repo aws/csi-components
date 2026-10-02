@@ -31,9 +31,9 @@ fi
 # Pulling ensures we always have the latest image (Trivy will skip pull sometimes)
 docker pull -q "${IMAGE_REF}"
 if [ -n "${OUTPUT_SARIF:+x}" ]; then
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.74.0 image --ignorefile /.trivyignore -f sarif "${IMAGE_REF}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.75.0 image --ignorefile /.trivyignore -f sarif "${IMAGE_REF}" > "${BASE_DIR}/../output/${IMAGE}.sarif"
   # Required by GitHub to upload multiple SARIF files: https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning#uploading-more-than-one-sarif-file-for-a-commit
   yq -o json -i ".runs[].automationDetails.id = \"trivy/${IMAGE}/$(date +%s)\"" "${BASE_DIR}/../output/${IMAGE}.sarif"
 else
-  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.74.0 image --ignorefile /.trivyignore -q "${IMAGE_REF}"
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro -v "${BASE_DIR}/.trivyignore:/.trivyignore:ro" public.ecr.aws/aquasecurity/trivy:0.75.0 image --ignorefile /.trivyignore -q "${IMAGE_REF}"
 fi
