@@ -6,6 +6,9 @@
 csi-attacher:
   tag: 'v4.13.0'
   eksbuild: '1'
+csi-external-health-monitor-controller:
+  tag: 'v0.19.0'
+  eksbuild: '1'
 csi-node-driver-registrar:
   tag: 'v2.18.0'
   eksbuild: '1'
