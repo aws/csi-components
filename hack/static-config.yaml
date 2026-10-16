@@ -6,6 +6,9 @@ csi-attacher:
   repo: https://github.com/kubernetes-csi/external-attacher
   targets: [amd64-linux-al2023, arm64-linux-al2023]
   e2e-parameter: sidecars.attacher.image
+csi-external-health-monitor-controller:
+  repo: https://github.com/kubernetes-csi/external-health-monitor
+  targets: [amd64-linux-al2023, arm64-linux-al2023]
 csi-node-driver-registrar:
   repo: https://github.com/kubernetes-csi/node-driver-registrar
   targets: [amd64-linux-al2023, arm64-linux-al2023, amd64-windows-ltsc2019, amd64-windows-ltsc2022, amd64-windows-ltsc2025]

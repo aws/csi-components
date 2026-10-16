@@ -27,6 +27,7 @@ The released images are hosted on the [`csi-components` ECR Public Registry](htt
 | [external-resizer](https://github.com/kubernetes-csi/external-resizer) | v2.3.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-resizer:v2.3.0-eksbuild.1` |
 | [external-snapshotter](https://github.com/kubernetes-csi/external-snapshotter) | v8.6.0-eksbuild.10 | `public.ecr.aws/csi-components/csi-snapshotter:v8.6.0-eksbuild.10` |
 | [livenessprobe](https://github.com/kubernetes-csi/livenessprobe) | v2.20.0-eksbuild.1 | `public.ecr.aws/csi-components/livenessprobe:v2.20.0-eksbuild.1` |
+| [external-health-monitor](https://github.com/kubernetes-csi/external-health-monitor) | v0.19.0-eksbuild.1 | `public.ecr.aws/csi-components/csi-external-health-monitor-controller:v0.19.0-eksbuild.1` |
 | [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) | v8.6.0-eksbuild.10 | `public.ecr.aws/csi-components/snapshot-controller:v8.6.0-eksbuild.10` |
 | [volume-modifier-for-k8s](https://github.com/awslabs/volume-modifier-for-k8s) | v0.9.6-eksbuild.2 | `public.ecr.aws/ebs-csi-driver/volume-modifier-for-k8s:v0.9.6-eksbuild.2` |
 
