@@ -33,27 +33,27 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd 
     export GOFLAGS=-mod=mod && \
     go-licenses save $(go list ./...) --save_path /app/licenses/
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:c6b638ad03ddace2b002f5342050aad976736e8044f046def84b27c9c063497e AS linux-al2023
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:3abbf5c12fae51f9c125b3ed961f3338c3f2416229f8167880084976b4353c58 AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
 COPY --from=builder /app/licenses/ /licenses/
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:4287cb03c77a1ccbb7a4f1cbe280545f5a22522b22389cb2acc9c89503a471bc AS windows-ltsc2019
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:5fedfcddbcec22fc95bc4c7cbf248541b290e700e8d627591fe3d70272066391 AS windows-ltsc2019
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:feb7680e34f3edaa8c34800496b785570feafdc0888465990ba33a4faddd5156 AS windows-ltsc2022
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:eeb59941aee7f7e5a377f9488292ce05076964980a140241eced432fed3399a5 AS windows-ltsc2022
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:23b6f5c624c0fd7ef4dea247a205641cc0fc3f72acec67fb422e4a523b7ebcc1 AS windows-ltsc2025
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:d64d5a3e74aec3047825b689b447fbb4df6dc210637bd0f625c2bfcb82dae3ed AS windows-ltsc2025
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
