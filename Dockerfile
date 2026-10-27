@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.27@sha256:f20d83a83e18dbd2a4714b8ffd4b30b287b6243962dd75608e86abcc63ba4efc AS builder
+FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:1.27@sha256:9048d5e7751706200eb1719c7dae0436950d362f29a1da91fa05e5c63867c60f AS builder
 RUN go env -w GOCACHE=/gocache GOMODCACHE=/gomodcache
 ARG GOPROXY
 # Dependencies not in builder image: yq and go-licenses
@@ -33,27 +33,27 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd 
     export GOFLAGS=-mod=mod && \
     go-licenses save $(go list ./...) --save_path /app/licenses/
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:c31991330f5e4c5727c412032c41ae73ae7d56da8ea085a427daba9adf57b0de AS linux-al2023
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:ad7f7f38214f78e941951aa5ba7c24ce9b7b2c28b808f1f138b1dc3e4751d8d6 AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
 COPY --from=builder /app/licenses/ /licenses/
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:5fedfcddbcec22fc95bc4c7cbf248541b290e700e8d627591fe3d70272066391 AS windows-ltsc2019
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:67177510f9e1718f757223ed8351cf68d0560fe3152e877f54779ea200368d53 AS windows-ltsc2019
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:eeb59941aee7f7e5a377f9488292ce05076964980a140241eced432fed3399a5 AS windows-ltsc2022
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:3e47f0353bc5829f21b5d6282bc9b6ebecb950836a85a4d9ed8a308d660909c0 AS windows-ltsc2022
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:d64d5a3e74aec3047825b689b447fbb4df6dc210637bd0f625c2bfcb82dae3ed AS windows-ltsc2025
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:d27360c62c2477ed5e216d938e065ccfef5f27f1857e0398f888078769d5160c AS windows-ltsc2025
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
