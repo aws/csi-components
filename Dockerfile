@@ -33,7 +33,7 @@ RUN --mount=type=cache,target=/gomodcache --mount=type=cache,target=/gocache cd 
     export GOFLAGS=-mod=mod && \
     go-licenses save $(go list ./...) --save_path /app/licenses/
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:9ce4f875289f0920daa7bc128f6230662c716829e8361c9c28d0b3d1ba670efc AS linux-al2023
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-minimal-base:latest-al23@sha256:b066e76bdecb1d7205389e9270001985f0d5596be789a742c7bbdc11a38ec4c5 AS linux-al2023
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT
 COPY --from=builder /app/licenses/ /licenses/
 ENV GODEBUG=fips140=off
