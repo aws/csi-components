@@ -20,13 +20,13 @@ csi-resizer:
   eksbuild: '4'
 csi-snapshotter:
   tag: 'v8.7.0'
-  eksbuild: '3'
+  eksbuild: '4'
 livenessprobe:
   tag: 'v2.20.0'
   eksbuild: '4'
 snapshot-controller:
   tag: 'v8.7.0'
-  eksbuild: '3'
+  eksbuild: '4'
 volume-modifier-for-k8s:
   tag: 'v0.9.6'
   eksbuild: '5'
