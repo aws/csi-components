@@ -24,7 +24,8 @@ jobs:
   janitor:
     # Don't run on forked repos
     if: ${{ github.repository == 'aws/csi-components' }}
-    runs-on: ubuntu-latest
+    runs-on:
+      - codebuild-csi-components-e2e-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Set up Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
