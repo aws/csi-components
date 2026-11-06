@@ -10,17 +10,13 @@ This repository contains the tooling used to build minimal Amazon Linux based ve
 
 These images are used in the official releases of the [EBS CSI Driver](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/) versions `v1.45.0` and later.
 
-## FIPS
-
-The binaries are built with Go's certified FIPS 140-3 cryptographic module. The images set FIPS mode off by default. Set `GODEBUG=fips140=on` on a container to enable FIPS mode for that container.
-
 ## Images
 
 The released images are hosted on the [`csi-components` ECR Public Registry](https://gallery.ecr.aws/csi-components).
 
 | Project | Latest Released Version | Image Pull URI |
 | ------------- | ------------- | ------------- |
-| [external-attacher](https://github.com/kubernetes-csi/external-attacher) | v4.13.0-eksbuild.4 | `public.ecr.aws/csi-components/csi-attacher:v4.13.0-eksbuild.4` |
+| [external-attacher](https://github.com/kubernetes-csi/external-attacher) | v4.13.0-eksbuild.5 | `public.ecr.aws/csi-components/csi-attacher:v4.13.0-eksbuild.5` |
 | [node-driver-registrar](https://github.com/kubernetes-csi/node-driver-registrar) | v2.18.0-eksbuild.4 | `public.ecr.aws/csi-components/csi-node-driver-registrar:v2.18.0-eksbuild.4` |
 | [external-provisioner](https://github.com/kubernetes-csi/external-provisioner) | v6.4.0-eksbuild.4 | `public.ecr.aws/csi-components/csi-provisioner:v6.4.0-eksbuild.4` |
 | [external-resizer](https://github.com/kubernetes-csi/external-resizer) | v2.3.0-eksbuild.4 | `public.ecr.aws/csi-components/csi-resizer:v2.3.0-eksbuild.4` |
@@ -29,6 +25,26 @@ The released images are hosted on the [`csi-components` ECR Public Registry](htt
 | [external-health-monitor](https://github.com/kubernetes-csi/external-health-monitor) | v0.19.0-eksbuild.4 | `public.ecr.aws/csi-components/csi-external-health-monitor-controller:v0.19.0-eksbuild.4` |
 | [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) | v8.7.0-eksbuild.3 | `public.ecr.aws/csi-components/snapshot-controller:v8.7.0-eksbuild.3` |
 | [volume-modifier-for-k8s](https://github.com/awslabs/volume-modifier-for-k8s) | v0.9.6-eksbuild.5 | `public.ecr.aws/ebs-csi-driver/volume-modifier-for-k8s:v0.9.6-eksbuild.5` |
+
+### Image Signing
+
+Official AWS-published images in ECR Public from this repository are signed with [cosign](https://github.com/sigstore/cosign). The public key is [`csi-components-images.pub`](./csi-components-images.pub).
+
+Example verification of an image:
+
+```
+$ cosign verify --key csi-components-images.pub public.ecr.aws/csi-components/csi-attacher:v4.13.0-eksbuild.5 >/dev/null
+
+Verification for public.ecr.aws/csi-components/csi-attacher:v4.13.0-eksbuild.5 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The signatures were verified against the specified public key
+```
+
+### FIPS
+
+The binaries are built with Go's certified FIPS 140-3 cryptographic module. The images set FIPS mode off by default. Set `GODEBUG=fips140=on` on a container to enable FIPS mode for that container.
 
 ## Building
 
