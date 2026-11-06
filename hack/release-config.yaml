@@ -5,7 +5,7 @@
 
 csi-attacher:
   tag: 'v4.13.0'
-  eksbuild: '4'
+  eksbuild: '5'
 csi-external-health-monitor-controller:
   tag: 'v0.19.0'
   eksbuild: '4'
