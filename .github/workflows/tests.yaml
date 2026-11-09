@@ -44,7 +44,7 @@ jobs:
 
       - name: Test Build Binaries
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.54.2/yq_linux_amd64 -O /usr/local/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           make all
   test-update:
@@ -61,7 +61,7 @@ jobs:
 
       - name: Run make update-readme
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.54.2/yq_linux_amd64 -O /usr/local/bin/yq
+          wget https://github.com/mikefarah/yq/releases/download/v4.54.3/yq_linux_amd64 -O /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
           make update-readme
 
