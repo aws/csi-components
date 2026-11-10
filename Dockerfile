@@ -39,21 +39,21 @@ COPY --from=builder /app/licenses/ /licenses/
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:67177510f9e1718f757223ed8351cf68d0560fe3152e877f54779ea200368d53 AS windows-ltsc2019
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:1809@sha256:a1858043414d36fa26d8255ec88792b6db3f2081418183ea109a9fcdbb6147f3 AS windows-ltsc2019
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:3e47f0353bc5829f21b5d6282bc9b6ebecb950836a85a4d9ed8a308d660909c0 AS windows-ltsc2022
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2022@sha256:b752fe56f3f5ca9d461a21da71d702f63a9e720c110d73c38487500a067f5754 AS windows-ltsc2022
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
 ENV GODEBUG=fips140=off
 ENTRYPOINT ["/$ENTRYPOINT.exe"]
 
-FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:d27360c62c2477ed5e216d938e065ccfef5f27f1857e0398f888078769d5160c AS windows-ltsc2025
+FROM public.ecr.aws/eks-distro-build-tooling/eks-distro-windows-base:ltsc2025@sha256:0eb07a7f35da01f75d20641d3e3bd531274a1017c46207204c43eb77bc980585 AS windows-ltsc2025
 COPY --from=builder /app/bin/$ENTRYPOINT /$ENTRYPOINT.exe
 COPY --from=builder /app/licenses/ /licenses/
 USER ContainerAdministrator
