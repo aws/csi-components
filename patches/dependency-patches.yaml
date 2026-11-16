@@ -21,6 +21,8 @@ csi-attacher:
   golang.org/x/time: v0.16.0
 csi-external-health-monitor-controller:
   golang.org/x/net: v0.62.0
+  go.opentelemetry.io/otel: v1.47.0
+  go.opentelemetry.io/otel/sdk: v1.47.0
 csi-node-driver-registrar:
   golang.org/x/net: v0.62.0
   go.opentelemetry.io/otel: v1.47.0
