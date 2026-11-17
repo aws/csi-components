@@ -44,11 +44,11 @@ jobs:
       # This also allows us to scan all component images in a single place as some images (e.g.
       # the volume-modifier-for-k8s image) are promoted to separate registries
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+        uses: aws-actions/amazon-ecr-login@7290e214a610b32bc0eef81748948b6d466a8783 # v2.2.0
 
       # Authenticate to avoid ECR Public pull rate limits
       - name: Login to Amazon ECR Public
-        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
+        uses: aws-actions/amazon-ecr-login@7290e214a610b32bc0eef81748948b6d466a8783 # v2.2.0
         env:
           AWS_REGION: us-east-1
         with:
